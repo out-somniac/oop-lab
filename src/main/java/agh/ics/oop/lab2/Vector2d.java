@@ -7,6 +7,8 @@ public class Vector2d {
         this.x = x;
         this.y = y;
     }
+
+    @Override
     public String toString() {
         return String.format("(%s, %s)", this.x, this.y);
     }
@@ -32,6 +34,7 @@ public class Vector2d {
     // Poniższa metoda equals używa ciekawego feature Java 14, a mianowicie pattern variable
     // Żeby poprawić czytelność kodu i uniknąć castowania linijka w warunku od razu castuje other na typ Vector2d
     // I w scope tego warunku daje nam dostęp do zmiennej that
+    @Override
     public boolean equals(Object other) {
         if(other instanceof Vector2d that) {
             return this.x == that.x && this.y == that.y;
