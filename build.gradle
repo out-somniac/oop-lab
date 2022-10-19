@@ -23,7 +23,7 @@ test {
 }
 
 application {
-    getMainClass().set('agh.ics.oop.lab2.World')
+    getMainClass().set('agh.ics.oop.lab3.World')
 }
 
 java {

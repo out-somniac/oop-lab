@@ -1,7 +1,7 @@
 package agh.ics.oop.lab2;
 
 public class Vector2d {
-    private final int x, y;
+    public final int x, y;
 
     public Vector2d(int x, int y) {
         this.x = x;
