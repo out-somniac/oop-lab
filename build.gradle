@@ -1,10 +1,29 @@
 plugins {
-    id 'application'
     id 'java'
+    id 'application'
+}
+
+group 'agh.ics.oop'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
 }
 
 application {
-    getMainClass().set('agh.ics.oop.lab1.World')
+    getMainClass().set('agh.ics.oop.lab2.World')
 }
 
 java {
