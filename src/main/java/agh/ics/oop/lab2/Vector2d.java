@@ -36,6 +36,9 @@ public class Vector2d {
     // I w scope tego warunku daje nam dostęp do zmiennej that
     @Override
     public boolean equals(Object other) {
+        if(this == other) {
+            return true;
+        }
         if(other instanceof Vector2d that) {
             return this.x == that.x && this.y == that.y;
         }
