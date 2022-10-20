@@ -2,20 +2,29 @@ package agh.ics.oop.lab2;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Vector2dTest {
-    Vector2d vec1 = new Vector2d(7, 2);
-    Vector2d vec2 = new Vector2d(-4, 2);
-    Vector2d vec3 = new Vector2d(17, -7);
-    Vector2d vec4 = new Vector2d(7, 2);
-    Vector2d vec5 = new Vector2d(-4 , 2);
-    Vector2d vec6 = new Vector2d(17, -7);
+    private Vector2d vec1, vec2, vec3, vec4, vec5, vec6;
+
+    @BeforeAll
+    public void setup() {
+        this.vec1 = new Vector2d(7, 2);
+        this.vec2 = new Vector2d(-4, 2);
+        this.vec3 = new Vector2d(17, -7);
+        this.vec4 = new Vector2d(7, 2);
+        this.vec5 = new Vector2d(-4, 2);
+        this.vec6 = new Vector2d(17, -7);
+    }
 
     @Test
-    public void test_toString(){
+    public void test_toString() {
         assertEquals(vec1.toString(), "(7, 2)");
         assertEquals(vec2.toString(), "(-4, 2)");
         assertEquals(vec3.toString(), "(17, -7)");
