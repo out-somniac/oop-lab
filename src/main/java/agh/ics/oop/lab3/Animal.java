@@ -18,20 +18,20 @@ public class Animal {
         return this.position.equals(position);
     }
 
+    private void move_by_vector(Vector2d displacement) {
+        Vector2d new_position = this.position.add(displacement);
+        if (new_position.precedes(new Vector2d(4, 4)) && new_position.follows(new Vector2d(0, 0))) {
+            this.position = new_position;
+        }
+        this.position = new_position;
+    }
+
     public void move(MoveDirection direction) {
         switch(direction) {
             case RIGHT -> this.orientation = this.orientation.next();
             case LEFT -> this.orientation = this.orientation.previous();
-            default -> {
-                Vector2d new_position = switch(direction) {
-                    case NORTH -> this.position.add(this.orientation.toUnitVector());
-                    case SOUTH -> this.position.add(this.orientation.toUnitVector().opposite());
-                    default -> null; // TODO: Get rid of this abomination somehow
-                };
-                if (new_position.precedes(new Vector2d(4, 4)) && new_position.follows(new Vector2d(0, 0))) {
-                    this.position = new_position;
-                }
-            }
+            case FORWARD -> this.move_by_vector(this.orientation.toUnitVector());
+            case BACKWARD -> this.move_by_vector(this.orientation.toUnitVector().opposite());
         }
     }
 
