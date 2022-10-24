@@ -10,8 +10,8 @@ public class Animal {
 
     @Override
     public String toString() {
-        return String.format("Position: (%s, %s) Direction: %s",
-                this.position.x, this.position.y, this.orientation.toString());
+        return String.format("%s facing %s",
+                this.position, this.orientation.toString());
     }
 
     public boolean isAt(Vector2d position) {
@@ -23,11 +23,10 @@ public class Animal {
         if (new_position.precedes(new Vector2d(4, 4)) && new_position.follows(new Vector2d(0, 0))) {
             this.position = new_position;
         }
-        this.position = new_position;
     }
 
     public void move(MoveDirection direction) {
-        switch(direction) {
+        switch (direction) {
             case RIGHT -> this.orientation = this.orientation.next();
             case LEFT -> this.orientation = this.orientation.previous();
             case FORWARD -> this.move_by_vector(this.orientation.toUnitVector());
