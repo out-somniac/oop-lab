@@ -1,6 +1,4 @@
-package agh.ics.oop.lab3;
-
-import agh.ics.oop.lab2.MoveDirection;
+package agh.ics.oop;
 
 import java.util.Arrays;
 import java.util.List;

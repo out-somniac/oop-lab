@@ -1,4 +1,4 @@
-package agh.ics.oop.lab3;
+package agh.ics.oop;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,9 +8,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import agh.ics.oop.lab2.MoveDirection;
-import agh.ics.oop.lab2.Vector2d;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AnimalTest {

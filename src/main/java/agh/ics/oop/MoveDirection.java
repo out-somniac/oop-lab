@@ -1,4 +1,4 @@
-package agh.ics.oop.lab2;
+package agh.ics.oop;
 
 public enum MoveDirection {
     FORWARD,

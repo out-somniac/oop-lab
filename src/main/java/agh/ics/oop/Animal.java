@@ -1,8 +1,4 @@
-package agh.ics.oop.lab3;
-
-import agh.ics.oop.lab2.MapDirection;
-import agh.ics.oop.lab2.MoveDirection;
-import agh.ics.oop.lab2.Vector2d;
+package agh.ics.oop;
 
 public class Animal {
     private MapDirection orientation = MapDirection.NORTH;

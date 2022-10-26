@@ -1,4 +1,4 @@
-package agh.ics.oop.lab3;
+package agh.ics.oop;
 
 public class World {
     public static void main(String[] args) {
