@@ -1,4 +1,4 @@
-package agh.ics.oop.lab2;
+package agh.ics.oop;
 
 public enum MapDirection {
     NORTH,
@@ -9,10 +9,10 @@ public enum MapDirection {
     @Override
     public String toString() {
         return switch (this) {
-            case NORTH -> "North";
-            case SOUTH -> "South";
-            case EAST -> "East";
-            case WEST -> "West";
+            case NORTH -> "N";
+            case SOUTH -> "S";
+            case EAST -> "E";
+            case WEST -> "W";
         };
     }
 

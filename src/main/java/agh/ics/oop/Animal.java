@@ -1,17 +1,35 @@
-package agh.ics.oop.lab3;
-
-import agh.ics.oop.lab2.MapDirection;
-import agh.ics.oop.lab2.MoveDirection;
-import agh.ics.oop.lab2.Vector2d;
+package agh.ics.oop;
 
 public class Animal {
     private MapDirection orientation = MapDirection.NORTH;
-    private Vector2d position = new Vector2d(2, 2);
+    private Vector2d position;
+    private IWorldMap map;
+
+    public Animal(IWorldMap map, Vector2d initialPosition) {
+        this.map = map;
+        this.position = initialPosition;
+    }
+
+    public Animal(IWorldMap map) {
+        this.map = map;
+        this.position = new Vector2d(2, 2);
+    }
+
+    public Animal() {
+        this(new RectangularMap(5, 5));
+    }
+
+    public MapDirection getOrientation() {
+        return this.orientation;
+    }
+
+    public Vector2d getPosition() {
+        return this.position;
+    }
 
     @Override
     public String toString() {
-        return String.format("%s facing %s",
-                this.position, this.orientation.toString());
+        return String.format("%s", this.orientation.toString());
     }
 
     public boolean isAt(Vector2d position) {
@@ -20,7 +38,7 @@ public class Animal {
 
     private void move_by_vector(Vector2d displacement) {
         Vector2d new_position = this.position.add(displacement);
-        if (new_position.precedes(new Vector2d(4, 4)) && new_position.follows(new Vector2d(0, 0))) {
+        if (map.canMoveTo(new_position)) {
             this.position = new_position;
         }
     }
