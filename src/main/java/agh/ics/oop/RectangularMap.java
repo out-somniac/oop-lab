@@ -7,6 +7,7 @@ public class RectangularMap implements IWorldMap {
     private final int width, height;
     private final Vector2d lowerLeft, upperRight;
     private final List<Animal> animals;
+    private final MapVisualizer visualizer;
 
     public RectangularMap(int width, int height) {
         this.width = width;
@@ -14,6 +15,7 @@ public class RectangularMap implements IWorldMap {
         this.lowerLeft = new Vector2d(0, 0);
         this.upperRight = new Vector2d(width - 1, height - 1);
         this.animals = new ArrayList<Animal>();
+        this.visualizer = new MapVisualizer(this);
     }
 
     @Override
@@ -34,10 +36,10 @@ public class RectangularMap implements IWorldMap {
     public boolean isOccupied(Vector2d position) {
         for (Animal animal : animals) {
             if (animal.getPosition().equals(position)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -50,4 +52,8 @@ public class RectangularMap implements IWorldMap {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return visualizer.draw(lowerLeft, upperRight);
+    }
 }

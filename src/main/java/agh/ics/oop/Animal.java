@@ -10,9 +10,17 @@ public class Animal {
         this.position = initialPosition;
     }
 
-    private Animal(IWorldMap map) {
+    public Animal(IWorldMap map) {
         this.map = map;
         this.position = new Vector2d(2, 2);
+    }
+
+    public Animal() {
+        this(new RectangularMap(5, 5));
+    }
+
+    public MapDirection getOrientation() {
+        return this.orientation;
     }
 
     public Vector2d getPosition() {

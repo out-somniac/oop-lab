@@ -20,30 +20,30 @@ public class AnimalTest {
 
     @Test
     public void test_position() {
-        assertEquals(new Animal().toString(), "(2, 2) facing North");
+        assertEquals(animal.getPosition(), new Vector2d(2, 2));
         animal.move(MoveDirection.FORWARD);
-        assertEquals(animal.toString(), "(2, 3) facing North");
+        assertEquals(animal.getPosition(), new Vector2d(2, 3));
         animal.move(MoveDirection.FORWARD);
-        assertEquals(animal.toString(), "(2, 4) facing North");
+        assertEquals(animal.getPosition(), new Vector2d(2, 4));
         animal.move(MoveDirection.LEFT);
         animal.move(MoveDirection.FORWARD);
-        assertEquals(animal.toString(), "(1, 4) facing West");
+        assertEquals(animal.getPosition(), new Vector2d(1, 4));
     }
 
     @Test
     public void test_orientation() {
         animal.move(MoveDirection.RIGHT);
-        assertEquals(animal.toString(), "(2, 2) facing East");
+        assertEquals(animal.getOrientation(), MapDirection.EAST);
         animal.move(MoveDirection.RIGHT);
-        assertEquals(animal.toString(), "(2, 2) facing South");
+        assertEquals(animal.getOrientation(), MapDirection.SOUTH);
         animal.move(MoveDirection.LEFT);
-        assertEquals(animal.toString(), "(2, 2) facing East");
+        assertEquals(animal.getOrientation(), MapDirection.EAST);
         animal.move(MoveDirection.RIGHT);
-        assertEquals(animal.toString(), "(2, 2) facing South");
+        assertEquals(animal.getOrientation(), MapDirection.SOUTH);
         animal.move(MoveDirection.RIGHT);
-        assertEquals(animal.toString(), "(2, 2) facing West");
+        assertEquals(animal.getOrientation(), MapDirection.WEST);
         animal.move(MoveDirection.RIGHT);
-        assertEquals(animal.toString(), "(2, 2) facing North");
+        assertEquals(animal.getOrientation(), MapDirection.NORTH);
     }
 
     @Test
