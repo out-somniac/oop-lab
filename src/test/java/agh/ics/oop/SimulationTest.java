@@ -9,12 +9,6 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimulationTest {
-    private Animal animal;
-
-    @BeforeEach
-    public void setup() {
-        this.animal = new Animal();
-    }
 
     @Test
     public void test_movement() {
