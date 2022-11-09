@@ -15,7 +15,7 @@ public class AnimalTest {
 
     @BeforeEach
     public void setup() {
-        this.animal = new Animal();
+        this.animal = new Animal(new RectangularMap(5, 5), new Vector2d(2, 2));
     }
 
     @Test
