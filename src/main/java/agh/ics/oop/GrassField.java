@@ -9,8 +9,7 @@ public class GrassField
     private final int grass_count;
     private final Vector2d lower_left;
     private final Vector2d upper_right;
-    public List<Grass> grass = new ArrayList<Grass>();
-    public List<Animal> animals = new ArrayList<Animal>();
+    private final Random random = new Random();
 
     public GrassField(int grass_count) {
         super();
@@ -18,14 +17,18 @@ public class GrassField
         this.lower_left = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
         this.upper_right = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-        Random random = new Random();
         for (int i = 0; i < this.grass_count; i++) {
-            int x = random.nextInt((int) Math.sqrt(10 * grass_count));
-            int y = random.nextInt((int) Math.sqrt(10 * grass_count));
-            if (!isOccupied(new Vector2d(x, y))) {
-                this.grass.add(new Grass(new Vector2d(x, y)));
-            }
+            addRandomGrass();
         }
+    }
+
+    private void addRandomGrass() {
+        int x, y;
+        do {
+            x = random.nextInt((int) Math.sqrt(10 * grass_count));
+            y = random.nextInt((int) Math.sqrt(10 * grass_count));
+        } while (!isOccupied(new Vector2d(x, y)));
+        this.entities.add(new Grass(new Vector2d(x, y)));
     }
 
     @Override
@@ -36,5 +39,10 @@ public class GrassField
     @Override
     public Vector2d upperRight() {
         return upper_right;
+    }
+
+    public void replace(Grass grass) {
+        entities.remove(grass);
+        addRandomGrass();
     }
 }

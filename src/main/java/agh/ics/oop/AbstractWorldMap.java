@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractWorldMap implements IWorldMap {
-    protected List<Animal> animals = new ArrayList<Animal>();
-    protected List<Grass> grass = new ArrayList<Grass>();
+    protected List<IEntity> entities = new ArrayList<IEntity>();
 
     public abstract Vector2d lowerLeft();
 
@@ -19,7 +18,7 @@ public abstract class AbstractWorldMap implements IWorldMap {
     @Override
     public boolean place(Animal animal) {
         if (!isOccupied(animal.getPosition())) {
-            animals.add(animal);
+            entities.add(animal);
             return true;
         }
         return false;
@@ -27,13 +26,8 @@ public abstract class AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean isOccupied(Vector2d position) {
-        for (Animal animal : animals) {
-            if (animal.getPosition().equals(position)) {
-                return true;
-            }
-        }
-        for (Grass grass_unit : grass) {
-            if (grass_unit.getPosition().equals(position)) {
+        for (IEntity entity : entities) {
+            if (entity.getPosition().equals(position)) {
                 return true;
             }
         }
@@ -42,14 +36,9 @@ public abstract class AbstractWorldMap implements IWorldMap {
 
     @Override
     public Object objectAt(Vector2d position) {
-        for (Animal animal : animals) {
-            if (animal.getPosition().equals(position)) {
-                return animal;
-            }
-        }
-        for (Grass grass_unit : grass) {
-            if (grass_unit.getPosition().equals(position)) {
-                return grass_unit;
+        for (IEntity entity : entities) {
+            if (entity.getPosition().equals(position)) {
+                return entity;
             }
         }
         return null;
