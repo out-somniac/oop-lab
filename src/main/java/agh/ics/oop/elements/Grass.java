@@ -1,6 +1,8 @@
-package agh.ics.oop;
+package agh.ics.oop.elements;
 
-public class Grass implements IEntity {
+import agh.ics.oop.core.Vector2d;
+
+public class Grass extends AbstractEntity {
     private Vector2d position;
 
     public Grass(Vector2d position) {

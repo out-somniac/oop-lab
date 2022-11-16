@@ -9,6 +9,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.Animal;
+import agh.ics.oop.enums.MapDirection;
+import agh.ics.oop.enums.MoveDirection;
+import agh.ics.oop.maps.RectangularMap;
+import agh.ics.oop.utils.OptionsParser;
+
+/*
+ * Unit tests for the Animal class
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AnimalTest {
     private Animal animal;
@@ -59,6 +69,9 @@ public class AnimalTest {
         assertTrue(animal.isAt(new Vector2d(4, 4)));
     }
 
+    /*
+     * Integration test with OptionsParset
+     */
     @Test
     public void test_stringInput() {
         MoveDirection[] moves = OptionsParser.parse("forward Szynszyl b left left forward f f".split(" "));

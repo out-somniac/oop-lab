@@ -1,4 +1,7 @@
-package agh.ics.oop;
+package agh.ics.oop.interfaces;
+
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.AbstractEntity;
 
 /**
  * The interface responsible for interacting with the map of the world.
@@ -25,7 +28,7 @@ public interface IWorldMap {
      * @return True if the animal was placed. The animal cannot be placed if the map
      *         is already occupied.
      */
-    boolean place(Animal animal);
+    boolean place(AbstractEntity entity);
 
     /**
      * Return true if given position on the map is occupied. Should not be

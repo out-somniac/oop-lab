@@ -1,8 +1,14 @@
 package agh.ics.oop;
 
 import org.junit.jupiter.api.Test;
+
+import agh.ics.oop.enums.MapDirection;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/*
+ * Unit tests for MapDirection
+ */
 public class MapDirectionTest {
     @Test
     public void test_next() {

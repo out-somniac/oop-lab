@@ -1,8 +1,10 @@
-package agh.ics.oop;
+package agh.ics.oop.utils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import agh.ics.oop.enums.MoveDirection;
 
 public class OptionsParser {
     public static MoveDirection[] parse(String[] args) {
