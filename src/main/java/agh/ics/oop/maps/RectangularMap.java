@@ -1,4 +1,6 @@
-package agh.ics.oop;
+package agh.ics.oop.maps;
+
+import agh.ics.oop.core.Vector2d;
 
 public class RectangularMap extends AbstractWorldMap {
     private final Vector2d lowerLeft, upperRight;

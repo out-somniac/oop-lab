@@ -1,14 +1,19 @@
-package agh.ics.oop;
+package agh.ics.oop.elements;
+
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.enums.MapDirection;
+import agh.ics.oop.enums.MoveDirection;
+import agh.ics.oop.maps.AbstractWorldMap;
 
 public class Animal extends AbstractEntity {
     private MapDirection orientation = MapDirection.NORTH;
     private Vector2d position;
-    private IWorldMap map;
+    private AbstractWorldMap map;
 
-    public Animal(IWorldMap map, Vector2d initialPosition) {
+    public Animal(AbstractWorldMap map, Vector2d initialPosition) {
         this.map = map;
         this.position = initialPosition;
-        addObserver((IMoveObserver) this.map);
+        addObserver(this.map);
     }
 
     public MapDirection getOrientation() {

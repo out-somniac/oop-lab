@@ -1,4 +1,7 @@
-package agh.ics.oop;
+package agh.ics.oop.interfaces;
+
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.AbstractEntity;
 
 /**
  * The interface responsible for interacting with the map of the world.

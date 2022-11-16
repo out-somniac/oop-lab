@@ -1,4 +1,4 @@
-package agh.ics.oop;
+package agh.ics.oop.core;
 
 import java.util.Objects;
 

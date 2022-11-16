@@ -1,8 +1,9 @@
-package agh.ics.oop;
+package agh.ics.oop.maps;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.Grass;
 
 public class GrassField
         extends AbstractWorldMap {

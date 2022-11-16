@@ -3,11 +3,17 @@ package agh.ics.oop;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+
+import agh.ics.oop.core.Vector2d;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+/*
+ * Unit tests to check that Vector2d functions correctly
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Vector2dTest {
     private Vector2d vec1, vec2, vec3, vec4, vec5, vec6;

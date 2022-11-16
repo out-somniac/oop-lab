@@ -5,6 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import agh.ics.oop.core.SimulationEngine;
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.Animal;
+import agh.ics.oop.enums.MapDirection;
+import agh.ics.oop.enums.MoveDirection;
+import agh.ics.oop.maps.AbstractWorldMap;
+import agh.ics.oop.maps.RectangularMap;
+import agh.ics.oop.utils.OptionsParser;
+
+/*
+ * Integration tests to check functionality of the entire simulation
+ */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SimulationTest {
 
@@ -12,7 +24,7 @@ public class SimulationTest {
     public void test_movement() {
         String[] args = "f b r l f f r r f f f f f f f f".split(" ");
         MoveDirection[] directions = OptionsParser.parse(args);
-        IWorldMap map = new RectangularMap(10, 5);
+        AbstractWorldMap map = new RectangularMap(10, 5);
         Vector2d[] positions = { new Vector2d(2, 2), new Vector2d(3, 4) };
         SimulationEngine engine = new SimulationEngine(directions, map, positions);
         engine.run();

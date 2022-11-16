@@ -1,7 +1,10 @@
-package agh.ics.oop;
+package agh.ics.oop.elements;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.interfaces.IMoveObserver;
 
 public abstract class AbstractEntity {
     private List<IMoveObserver> observers = new ArrayList<>();

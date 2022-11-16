@@ -1,13 +1,18 @@
-package agh.ics.oop;
+package agh.ics.oop.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import agh.ics.oop.elements.Animal;
+import agh.ics.oop.enums.MoveDirection;
+import agh.ics.oop.interfaces.IEngine;
+import agh.ics.oop.maps.AbstractWorldMap;
 
 public class SimulationEngine implements IEngine {
     private final List<MoveDirection> directions;
     private final List<Animal> animals;
 
-    public SimulationEngine(MoveDirection[] directions, IWorldMap map, Vector2d[] positions) {
+    public SimulationEngine(MoveDirection[] directions, AbstractWorldMap map, Vector2d[] positions) {
         this.directions = List.of(directions);
         this.animals = new ArrayList<>();
         for (Vector2d position : positions) {

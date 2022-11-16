@@ -1,4 +1,6 @@
-package agh.ics.oop;
+package agh.ics.oop.interfaces;
+
+import agh.ics.oop.core.Vector2d;
 
 public interface IMoveObserver {
     /**

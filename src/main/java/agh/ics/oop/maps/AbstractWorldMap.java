@@ -1,7 +1,13 @@
-package agh.ics.oop;
+package agh.ics.oop.maps;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import agh.ics.oop.core.MapVisualizer;
+import agh.ics.oop.core.Vector2d;
+import agh.ics.oop.elements.AbstractEntity;
+import agh.ics.oop.interfaces.IMoveObserver;
+import agh.ics.oop.interfaces.IWorldMap;
 
 public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
     protected Map<Vector2d, AbstractEntity> entities = new HashMap<>();
