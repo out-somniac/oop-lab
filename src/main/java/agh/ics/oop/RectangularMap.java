@@ -1,8 +1,5 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RectangularMap extends AbstractWorldMap {
     private final Vector2d lowerLeft, upperRight;
 

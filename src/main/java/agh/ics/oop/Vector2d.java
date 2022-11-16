@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import java.util.Objects;
+
 public class Vector2d {
     public final int x, y;
 
@@ -37,11 +39,6 @@ public class Vector2d {
         return new Vector2d(this.x - other.x, this.y - other.y);
     }
 
-    // Poniższa metoda equals używa ciekawego feature Java 14, a mianowicie pattern
-    // variable
-    // Żeby poprawić czytelność kodu i uniknąć castowania linijka w warunku od razu
-    // castuje other na typ Vector2d
-    // I w scope tego warunku daje nam dostęp do zmiennej that
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -52,6 +49,11 @@ public class Vector2d {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 
     public Vector2d opposite() {

@@ -28,7 +28,9 @@ public class GrassField
             x = random.nextInt((int) Math.sqrt(10 * grass_count));
             y = random.nextInt((int) Math.sqrt(10 * grass_count));
         } while (isOccupied(new Vector2d(x, y)));
-        this.entities.add(new Grass(new Vector2d(x, y)));
+        Vector2d position = new Vector2d(x, y);
+        this.entities.put(position, new Grass(position)); // TODO: Should be done like this. Rather with
+                                                          // AbstractWorldMap.place() and make entities private
     }
 
     @Override
@@ -39,10 +41,5 @@ public class GrassField
     @Override
     public Vector2d upperRight() {
         return upper_right;
-    }
-
-    public void replace(Grass grass) {
-        entities.remove(grass);
-        addRandomGrass();
     }
 }
