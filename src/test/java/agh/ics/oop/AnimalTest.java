@@ -69,6 +69,9 @@ public class AnimalTest {
         assertTrue(animal.isAt(new Vector2d(4, 4)));
     }
 
+    /*
+     * Integration test with OptionsParset
+     */
     @Test
     public void test_stringInput() {
         MoveDirection[] moves = OptionsParser.parse("forward Szynszyl b left left forward f f".split(" "));
