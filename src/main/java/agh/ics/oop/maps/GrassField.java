@@ -8,15 +8,11 @@ import agh.ics.oop.elements.Grass;
 public class GrassField
         extends AbstractWorldMap {
     private final int grass_count;
-    private final Vector2d lower_left;
-    private final Vector2d upper_right;
     private final Random random = new Random();
 
     public GrassField(int grass_count) {
         super();
         this.grass_count = grass_count;
-        this.lower_left = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
-        this.upper_right = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         for (int i = 0; i < this.grass_count; i++) {
             addRandomGrass();
