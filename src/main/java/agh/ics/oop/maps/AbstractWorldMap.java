@@ -6,11 +6,13 @@ import java.util.Map;
 import agh.ics.oop.core.MapVisualizer;
 import agh.ics.oop.core.Vector2d;
 import agh.ics.oop.elements.AbstractEntity;
+import agh.ics.oop.elements.Grass;
 import agh.ics.oop.interfaces.IMoveObserver;
 import agh.ics.oop.interfaces.IWorldMap;
 
 public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
     protected Map<Vector2d, AbstractEntity> entities = new HashMap<>();
+    protected final MapBoundary map_boundary = new MapBoundary();
 
     public abstract Vector2d lowerLeft();
 
@@ -18,7 +20,10 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return position.follows(lowerLeft()) && position.precedes(upperRight()) && !isOccupied(position);
+        if (this.isOccupied(position)) {
+            return (objectAt(position) instanceof Grass);
+        }
+        return true;
     }
 
     @Override
@@ -39,6 +44,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
             throw new IllegalArgumentException("Can not move entity to " + entity.getPosition());
         }
         entities.put(entity.getPosition(), entity);
+        map_boundary.addPosition(entity.getPosition());
         entity.addObserver(this);
     }
 

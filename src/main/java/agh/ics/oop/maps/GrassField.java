@@ -32,15 +32,16 @@ public class GrassField
         Vector2d position = new Vector2d(x, y);
         this.entities.put(position, new Grass(position)); // TODO: Should be done like this. Rather with
                                                           // AbstractWorldMap.place() and make entities private
-    }
-
-    @Override
-    public Vector2d lowerLeft() {
-        return lower_left;
+        this.map_boundary.addPosition(position);
     }
 
     @Override
     public Vector2d upperRight() {
-        return upper_right;
+        return this.map_boundary.getUpperRight();
+    }
+
+    @Override
+    public Vector2d lowerLeft() {
+        return this.map_boundary.getLowerLeft();
     }
 }
