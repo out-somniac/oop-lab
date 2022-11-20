@@ -13,7 +13,6 @@ public class Animal extends AbstractEntity {
     public Animal(AbstractWorldMap map, Vector2d initialPosition) {
         this.map = map;
         this.position = initialPosition;
-        addObserver(this.map);
     }
 
     public MapDirection getOrientation() {

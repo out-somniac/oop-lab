@@ -8,15 +8,8 @@ import agh.ics.oop.enums.MoveDirection;
 
 public class OptionsParser {
     public static MoveDirection[] parse(String[] args) {
-        MoveDirection[] result = new MoveDirection[0]; // Possible unwanted allocation. Still better than returning null
-        try {
-            result = argsToDirections(args).stream()
-                    .toArray(MoveDirection[]::new);
-
-        } catch (IllegalArgumentException ex) {
-            System.err.println(ex);
-        }
-        return result;
+        return argsToDirections(args).stream()
+                .toArray(MoveDirection[]::new);
     }
 
     private static MoveDirection stringToDirection(String str) throws IllegalArgumentException {

@@ -39,6 +39,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
             throw new IllegalArgumentException("Can not move entity to " + entity.getPosition());
         }
         entities.put(entity.getPosition(), entity);
+        entity.addObserver(this);
     }
 
     @Override

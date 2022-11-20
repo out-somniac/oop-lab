@@ -15,7 +15,7 @@ public abstract class AbstractEntity {
         observers.forEach(observer -> observer.updatePosition(new_position, old_position));
     }
 
-    protected void addObserver(IMoveObserver observer) {
+    public void addObserver(IMoveObserver observer) {
         observers.add(observer);
     }
 

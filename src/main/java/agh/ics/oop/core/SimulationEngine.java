@@ -11,8 +11,10 @@ import agh.ics.oop.maps.AbstractWorldMap;
 public class SimulationEngine implements IEngine {
     private final List<MoveDirection> directions;
     private final List<Animal> animals;
+    private final AbstractWorldMap map;
 
     public SimulationEngine(MoveDirection[] directions, AbstractWorldMap map, Vector2d[] positions) {
+        this.map = map;
         this.directions = List.of(directions);
         this.animals = new ArrayList<>();
         for (Vector2d position : positions) {
