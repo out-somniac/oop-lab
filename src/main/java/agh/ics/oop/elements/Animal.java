@@ -41,12 +41,13 @@ public class Animal extends AbstractEntity {
         }
     }
 
-    public void move(MoveDirection direction) {
+    public void move(MoveDirection direction) throws IllegalArgumentException {
         switch (direction) {
             case RIGHT -> this.orientation = this.orientation.next();
             case LEFT -> this.orientation = this.orientation.previous();
             case FORWARD -> this.move_by_vector(this.orientation.toUnitVector());
             case BACKWARD -> this.move_by_vector(this.orientation.toUnitVector().opposite());
+            default -> throw new IllegalArgumentException(direction + " is not a valid direction argument!");
         }
     }
 

@@ -25,16 +25,6 @@ public class GrassFieldTest {
         assertEquals(new Vector2d(3, 3), animal_b.getPosition());
     }
 
-    @Test
-    public void test_AnimalToGrassCollision() {
-        GrassField map = new GrassField(1);
-        Animal animal = new Animal(map, new Vector2d(3, 0));
-        animal.move(MoveDirection.LEFT);
-        animal.move(MoveDirection.FORWARD);
-        animal.move(MoveDirection.FORWARD);
-        assertEquals(new Vector2d(1, 0), animal.getPosition());
-    }
-
     /*
      * This test checks if an animal can move in a spiral pattern essentialy
      * covering a large portion of the map
