@@ -3,8 +3,6 @@ package agh.ics.oop;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -14,7 +12,6 @@ import agh.ics.oop.elements.Animal;
 import agh.ics.oop.enums.MapDirection;
 import agh.ics.oop.enums.MoveDirection;
 import agh.ics.oop.maps.RectangularMap;
-import agh.ics.oop.utils.OptionsParser;
 
 /*
  * Unit tests for the Animal class
@@ -67,18 +64,5 @@ public class AnimalTest {
         animal.move(MoveDirection.FORWARD);
         animal.move(MoveDirection.FORWARD);
         assertTrue(animal.isAt(new Vector2d(4, 4)));
-    }
-
-    /*
-     * Integration test with OptionsParset
-     */
-    @Test
-    public void test_stringInput() {
-        MoveDirection[] moves = OptionsParser.parse("forward Szynszyl b left left forward f f".split(" "));
-        Arrays.stream(moves).forEach(move -> this.animal.move(move));
-        assertTrue(animal.isAt(new Vector2d(2, 0)));
-        moves = OptionsParser.parse("right ¯\\_(ツ)_/¯ forward f f".split(" "));
-        Arrays.stream(moves).forEach(move -> this.animal.move(move));
-        assertTrue(animal.isAt(new Vector2d(0, 0)));
     }
 }

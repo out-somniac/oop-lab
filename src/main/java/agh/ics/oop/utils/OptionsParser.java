@@ -9,17 +9,16 @@ import agh.ics.oop.enums.MoveDirection;
 public class OptionsParser {
     public static MoveDirection[] parse(String[] args) {
         return argsToDirections(args).stream()
-                .filter(direction -> direction != null)
                 .toArray(MoveDirection[]::new);
     }
 
-    private static MoveDirection stringToDirection(String str) {
+    private static MoveDirection stringToDirection(String str) throws IllegalArgumentException {
         return switch (str.toLowerCase()) {
             case "f", "forward" -> MoveDirection.FORWARD;
             case "b", "backward" -> MoveDirection.BACKWARD;
             case "l", "left" -> MoveDirection.LEFT;
             case "r", "right" -> MoveDirection.RIGHT;
-            default -> null;
+            default -> throw new IllegalArgumentException(str + " is not a valid argument!");
         };
     }
 

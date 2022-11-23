@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 group 'agh.ics.oop'
@@ -8,6 +9,10 @@ version '1.0'
 
 repositories {
     mavenCentral()
+    javafx {
+        version = "17"
+        modules = [ 'javafx.controls' ]
+    }
 }
 
 dependencies {
@@ -23,7 +28,7 @@ test {
 }
 
 application {
-    getMainClass().set('agh.ics.oop.World')
+    getMainClass().set('agh.ics.oop.core.World')
 }
 
 java {

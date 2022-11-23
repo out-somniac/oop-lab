@@ -15,6 +15,8 @@ public class GrassFieldTest {
         GrassField map = new GrassField(1);
         Animal animal_a = new Animal(map, new Vector2d(3, 0));
         Animal animal_b = new Animal(map, new Vector2d(0, 3));
+        animal_a.addObserver(map);
+        animal_b.addObserver(map);
         animal_b.move(MoveDirection.RIGHT);
         for (int i = 0; i < 4; i++) {
             animal_a.move(MoveDirection.FORWARD);
@@ -23,16 +25,6 @@ public class GrassFieldTest {
 
         assertEquals(new Vector2d(3, 4), animal_a.getPosition());
         assertEquals(new Vector2d(3, 3), animal_b.getPosition());
-    }
-
-    @Test
-    public void test_AnimalToGrassCollision() {
-        GrassField map = new GrassField(1);
-        Animal animal = new Animal(map, new Vector2d(3, 0));
-        animal.move(MoveDirection.LEFT);
-        animal.move(MoveDirection.FORWARD);
-        animal.move(MoveDirection.FORWARD);
-        assertEquals(new Vector2d(1, 0), animal.getPosition());
     }
 
     /*
