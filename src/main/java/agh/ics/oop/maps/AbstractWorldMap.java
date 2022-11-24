@@ -29,11 +29,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
     @Override
     public void updatePosition(Vector2d new_position, Vector2d old_position) {
         AbstractEntity entity = entities.get(old_position);
-        // if (entity == null) {
-        // throw new IllegalArgumentException("No entity at " + old_position);
-        // }
-        // TODO: According to all known laws of coding this should work. But It doesn't
-        // >:(
         entities.remove(old_position);
         entities.put(new_position, entity);
     }
