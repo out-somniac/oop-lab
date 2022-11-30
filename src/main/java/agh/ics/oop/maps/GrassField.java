@@ -26,8 +26,7 @@ public class GrassField
             y = random.nextInt((int) Math.sqrt(10 * grass_count));
         } while (isOccupied(new Vector2d(x, y)));
         Vector2d position = new Vector2d(x, y);
-        this.entities.put(position, new Grass(position)); // TODO: Should be done like this. Rather with
-                                                          // AbstractWorldMap.place() and make entities private
+        this.entities.put(position, new Grass(position));
         this.map_boundary.addPosition(position);
     }
 

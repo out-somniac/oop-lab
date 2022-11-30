@@ -17,4 +17,14 @@ public class Grass extends AbstractEntity {
     public String toString() {
         return "*";
     }
+
+    @Override
+    public String getLabelText() {
+        return "Grass";
+    }
+
+    @Override
+    public String getImagePath() {
+        return "src/main/resources/grass.png";
+    }
 }

@@ -50,4 +50,19 @@ public class Animal extends AbstractEntity {
         }
     }
 
+    @Override
+    public String getImagePath() {
+        return switch (this.getOrientation()) {
+            case NORTH -> "src/main/resources/up.png";
+            case EAST -> "src/main/resources/right.png";
+            case SOUTH -> "src/main/resources/down.png";
+            case WEST -> "src/main/resources/left.png";
+        };
+    }
+
+    @Override
+    public String getLabelText() {
+        return this.getPosition().toString() + ", " + this.getOrientation().toString();
+    }
+
 }

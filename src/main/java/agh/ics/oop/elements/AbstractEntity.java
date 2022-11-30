@@ -11,6 +11,10 @@ public abstract class AbstractEntity {
 
     public abstract Vector2d getPosition();
 
+    public abstract String getImagePath();
+
+    public abstract String getLabelText();
+
     protected void notifyMove(Vector2d new_position, Vector2d old_position) {
         observers.forEach(observer -> observer.updatePosition(new_position, old_position));
     }

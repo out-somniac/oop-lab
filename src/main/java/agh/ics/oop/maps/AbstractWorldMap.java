@@ -41,6 +41,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
         entities.put(entity.getPosition(), entity);
         map_boundary.addPosition(entity.getPosition());
         entity.addObserver(this);
+        entity.addObserver(map_boundary);
     }
 
     @Override
@@ -49,7 +50,7 @@ public abstract class AbstractWorldMap implements IWorldMap, IMoveObserver {
     }
 
     @Override
-    public Object objectAt(Vector2d position) {
+    public AbstractEntity objectAt(Vector2d position) {
         return entities.get(position);
     }
 
