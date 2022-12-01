@@ -7,8 +7,20 @@ import agh.ics.oop.core.Vector2d;
 import agh.ics.oop.interfaces.IMoveObserver;
 
 public class MapBoundary implements IMoveObserver {
-    private final TreeSet<Vector2d> xOrder = new TreeSet<>(Comparator.comparingInt(p -> p.x));
-    private final TreeSet<Vector2d> yOrder = new TreeSet<>(Comparator.comparingInt(p -> p.y));
+    private final TreeSet<Vector2d> xOrder = new TreeSet<>((v1, v2) -> {
+        if (v1.x == v2.x) {
+            return Integer.compare(v1.y, v2.y);
+        } else {
+            return Integer.compare(v1.x, v2.x);
+        }
+    });
+    private final TreeSet<Vector2d> yOrder = new TreeSet<>((v1, v2) -> {
+        if (v1.y == v2.y) {
+            return Integer.compare(v1.x, v2.x);
+        } else {
+            return Integer.compare(v1.y, v2.y);
+        }
+    });
 
     @Override
     public void updatePosition(Vector2d new_position, Vector2d old_position) {
