@@ -10,6 +10,8 @@ import agh.ics.oop.interfaces.IEngine;
 import agh.ics.oop.maps.AbstractWorldMap;
 import agh.ics.oop.maps.GrassField;
 import agh.ics.oop.utils.OptionsParser;
+import agh.ics.oop.utils.TextureManager;
+
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -31,6 +33,7 @@ public class App extends Application {
     private final String title = "Window";
     private MapDirection orientation = MapDirection.NORTH;
     private final GridPane grid_pane = new GridPane();
+    private final TextureManager texture_manager = new TextureManager();
 
     private void setupGridPane(AbstractWorldMap map) {
         grid_pane.setGridLinesVisible(true);
@@ -68,7 +71,7 @@ public class App extends Application {
                 int screen_y = upper_right.y - j + 1;
                 Vector2d world_position = new Vector2d(i, j);
                 if (map.isOccupied(world_position)) {
-                    GuiElementBox element = new GuiElementBox(map.objectAt(world_position));
+                    GuiElementBox element = new GuiElementBox(map.objectAt(world_position), this.texture_manager);
                     VBox v_box = element.getVBox();
                     GridPane.setHalignment(v_box, HPos.CENTER);
                     grid_pane.add(v_box, screen_x, screen_y);
