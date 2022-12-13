@@ -1,7 +1,5 @@
 package org.example;
 
-import org.example.Vector2d;
-
 public enum Direction {
     NORTH,
     NORTH_EAST,
@@ -11,6 +9,11 @@ public enum Direction {
     SOUTH_WEST,
     WEST,
     NORTH_WEST;
+
+    public static final int size;
+    static {
+        size = Direction.values().length;
+    }
 
     @Override
     public String toString() {
@@ -39,7 +42,7 @@ public enum Direction {
         };
     }
 
-    private Direction toEnum(int ordinal) {
+    private static Direction toEnum(int ordinal) {
         return switch (ordinal) {
             case 0 -> NORTH;
             case 1 -> NORTH_EAST;
@@ -56,7 +59,7 @@ public enum Direction {
     }
 
     public Direction rotate(int rotation) {
-        return toEnum(toOrdinal(this) + rotation % 8);
+        return toEnum((toOrdinal(this) + rotation) % 8);
     }
 
     public Vector2d toUnitVector() {
@@ -71,5 +74,10 @@ public enum Direction {
             case NORTH_WEST -> new Vector2d(-1, 1);
 
         };
+    }
+
+    public static Direction randomDirection() {
+        int sample = (int) (Math.random() * Direction.size);
+        return Direction.toEnum(sample);
     }
 }
