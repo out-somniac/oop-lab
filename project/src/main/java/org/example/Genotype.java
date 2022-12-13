@@ -13,10 +13,7 @@ public class Genotype {
         this.genes = random_genes(number_of_genes);
     }
 
-    /*
-     * Cyclicly moves the gene_index to next gene
-     */
-    public void next_gene() {
+    public void advance_gene() {
         this.gene_index = (this.gene_index + 1) % this.number_of_genes;
     }
 
@@ -33,8 +30,7 @@ public class Genotype {
      * animal should move. When called it will NOT advance to the next gene so
      * moving to the next gene has to be handled outside of this class.
      */
-    public Direction move_direction(Direction animal_direction) {
-        Direction result = animal_direction.rotate(genes[gene_index]);
-        return result;
+    public int get_rotation() {
+        return genes[gene_index];
     }
 }
