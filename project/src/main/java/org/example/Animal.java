@@ -6,7 +6,8 @@ public class Animal {
 
     private Direction direction;
     private Vector2d position;
-    private int energy;
+    public int energy;
+    private Configuration simulation_config;
 
     public Animal(Vector2d position, Direction direction, IMap map, Configuration config) {
         this.position = position;
@@ -14,7 +15,12 @@ public class Animal {
         this.genotype = new Genotype(config.getGenomeLength());
         this.map = map;
         this.energy = config.getStartingEnergy();
+        this.simulation_config = config;
+    }
 
+    @Override
+    public String toString() {
+        return this.position.toString() + " " + this.direction.toString();
     }
 
     public Direction getDirection() {
@@ -33,11 +39,11 @@ public class Animal {
         this.direction = this.direction.rotate(this.genotype.get_rotation());
         this.genotype.advance_gene();
         Vector2d desired_position = this.position.add(this.direction.toUnitVector());
-        if (!this.map.isLegalPosition(desired_position)) {
+        if (this.map.isLegalPosition(desired_position)) {
             this.position = desired_position;
         } else {
-            this.position = this.map.newAnimalPosition();
-            this.energy -= this.config.getEnergyPenalty();
+            this.position = this.map.randomAnimalPosition();
+            this.energy -= simulation_config.getEnergyPenalty();
         }
     }
 }

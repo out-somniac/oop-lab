@@ -1,21 +1,33 @@
 package org.example;
 
-import java.io.ObjectInputFilter.Config;
 import java.util.ArrayList;
 
 public class Simulation {
     private ArrayList<Animal> animals = new ArrayList<Animal>();
     private boolean running;
-    private Configuration config = new Configuration(""); // TODO: Read config from file
+    private Configuration config = new Configuration("");
+    private int lifetime = 0;
+    private IMap map = new PortalMap(config.getWidth(), config.getHeight()); // For now hardcoded...
 
-    private void run() {
+    public void run() {
         running = true;
+        createInitialAnimals(config.getInitialAnimalsTotal());
         while (running) {
             removeDeadEntities();
-            moveEntities();
+            moveAnimals();
             // Conflict resolution...
             // Breeding step...
-            // growPlants();
+            // Grow plants ...
+            lifetime += 1;
+        }
+
+    }
+
+    private void createInitialAnimals(int total) {
+        for (int i = 0; i < total; i++) {
+            Vector2d position = this.map.randomAnimalPosition();
+            Direction direction = Direction.randomDirection();
+            this.animals.add(new Animal(position, direction, this.map, this.config));
         }
     }
 
@@ -23,7 +35,7 @@ public class Simulation {
         this.animals.removeIf(animal -> !animal.is_alive());
     }
 
-    private void moveEntities() {
+    private void moveAnimals() {
         for (Animal animal : this.animals) {
             animal.move();
         }
