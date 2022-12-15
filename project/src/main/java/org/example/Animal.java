@@ -18,6 +18,10 @@ public class Animal {
         this.simulation_config = config;
     }
 
+    void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
     @Override
     public String toString() {
         return this.position.toString() + " " + this.direction.toString();
@@ -32,7 +36,7 @@ public class Animal {
     }
 
     public boolean is_alive() {
-        return this.energy >= 0;
+        return this.energy > 0;
     }
 
     public void move() {
@@ -45,5 +49,13 @@ public class Animal {
             this.position = this.map.randomAnimalPosition();
             this.energy -= simulation_config.getEnergyPenalty();
         }
+    }
+
+    public boolean wantsToReproduce() {
+        return this.energy >= simulation_config.getFullEnergy();
+    }
+
+    public void eatVegetation(Plant plant) {
+        this.energy = Math.min(simulation_config.getMaxEnergy(), this.energy + plant.getEnergy());
     }
 }
