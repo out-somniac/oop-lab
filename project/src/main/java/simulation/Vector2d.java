@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 import java.util.Objects;
 

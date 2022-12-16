@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 public class Genotype {
     private final int min_gene = 0;

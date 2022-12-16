@@ -1,6 +1,5 @@
-package org.example;
+package simulation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface IMap {

@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 import javafx.util.Pair;
 

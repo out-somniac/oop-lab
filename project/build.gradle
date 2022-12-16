@@ -4,7 +4,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
-group 'org.example'
+group 'simulation'
 version '1.0'
 
 repositories {
@@ -28,7 +28,7 @@ test {
 }
 
 application {
-    getMainClass().set('org.example.Main')
+    getMainClass().set('simulation.Main')
 }
 
 java {

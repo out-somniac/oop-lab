@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 public class Animal {
     private final Genotype genotype;

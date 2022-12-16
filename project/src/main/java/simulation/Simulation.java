@@ -1,19 +1,21 @@
-package org.example;
+package simulation;
 
 import java.util.ArrayList;
 
 public class Simulation {
+    private Configuration config;
     private ArrayList<Animal> animals = new ArrayList<Animal>();
-    private boolean running;
-    private Configuration config = new Configuration("");
     private int lifetime = 0;
-    private IMap map = new PortalMap(config.getWidth(), config.getHeight(), config); // For now hardcoded...
+    private IMap map;
+    private final AnimalFactory animalFactory;
 
-    private final AnimalFactory animalFactory = new AnimalFactory(config, map);
-
+    public Simulation(Configuration config) {
+        this.config = config;
+        this.map = new PortalMap(config.getWidth(), config.getHeight(), config);
+        this.animalFactory = new AnimalFactory(config, map);
+    }
 
     public void run() {
-        running = true;
         createInitialAnimals(config.getInitialAnimalsTotal());
         while (nrOfAnimals > 0) {
             resetStats();
@@ -100,7 +102,7 @@ public class Simulation {
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
                 Tile thisTile = tiles[i][j];
-                if(thisTile.getPlant() != null && thisTile.hasAnimals()) {
+                if (thisTile.getPlant() != null && thisTile.hasAnimals()) {
                     thisTile.getTheFittestAnimal().eatVegetation(thisTile.getPlant());
                     thisTile.placePlant(null);
                     plantsEaten++;
@@ -114,7 +116,5 @@ public class Simulation {
         parent2.energy -= config.getCreationEnergy();
         return animalFactory.createAnimal(parent1, parent2);
     }
-
-
 
 }
