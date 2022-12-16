@@ -7,7 +7,7 @@ public class Animal {
     private Direction direction;
     private Vector2d position;
     public int energy;
-    private Configuration simulation_config;
+    private Configuration simulationConfig;
 
     public Animal(Vector2d position, Direction direction, IMap map, Configuration config) {
         this.position = position;
@@ -15,7 +15,7 @@ public class Animal {
         this.genotype = new Genotype(config.getGenomeLength());
         this.map = map;
         this.energy = config.getStartingEnergy();
-        this.simulation_config = config;
+        this.simulationConfig = config;
     }
 
     void setEnergy(int energy) {
@@ -35,27 +35,27 @@ public class Animal {
         return this.position;
     }
 
-    public boolean is_alive() {
+    public boolean isAlive() {
         return this.energy > 0;
     }
 
     public void move() {
         this.direction = this.direction.rotate(this.genotype.getRotation());
-        this.genotype.advance_gene();
-        Vector2d desired_position = this.position.add(this.direction.toUnitVector());
-        if (this.map.isLegalPosition(desired_position)) {
-            this.position = desired_position;
+        this.genotype.advanceGene();
+        Vector2d desiredPosition = this.position.add(this.direction.toUnitVector());
+        if (this.map.isLegalPosition(desiredPosition)) {
+            this.position = desiredPosition;
         } else {
-            this.position = this.map.newAnimalPosition(desired_position);
-            this.energy -= simulation_config.getEnergyPenalty();
+            this.position = this.map.newAnimalPosition(desiredPosition);
+            this.energy -= simulationConfig.getEnergyPenalty();
         }
     }
 
     public boolean wantsToReproduce() {
-        return this.energy >= simulation_config.getFullEnergy();
+        return this.energy >= simulationConfig.getFullEnergy();
     }
 
     public void eatVegetation(Plant plant) {
-        this.energy = Math.min(simulation_config.getMaxEnergy(), this.energy + plant.getEnergy());
+        this.energy = Math.min(simulationConfig.getMaxEnergy(), this.energy + plant.getEnergy());
     }
 }

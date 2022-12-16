@@ -81,8 +81,8 @@ public class Simulation {
     }
 
     private void removeDeadEntities() {
-        animalsDied = (int) this.animals.stream().filter(animal -> !animal.is_alive()).count();
-        this.animals.removeIf(animal -> !animal.is_alive());
+        animalsDied = (int) this.animals.stream().filter(animal -> !animal.isAlive()).count();
+        this.animals.removeIf(animal -> !animal.isAlive());
     }
 
     private void moveAnimals() {
