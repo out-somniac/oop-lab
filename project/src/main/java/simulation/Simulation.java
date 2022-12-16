@@ -1,6 +1,7 @@
 package simulation;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 public class Simulation {
     private Configuration config;
@@ -11,7 +12,7 @@ public class Simulation {
 
     public Simulation(Configuration config) {
         this.config = config;
-        this.map = new PortalMap(config.getWidth(), config.getHeight(), config);
+        this.map = new PortalMap(config);
         this.animalFactory = new AnimalFactory(config, map);
     }
 
@@ -49,11 +50,14 @@ public class Simulation {
     }
 
     private void createInitialAnimals(int total) {
-        for (int i = 0; i < total; i++) {
-            Vector2d position = this.map.randomAnimalPosition();
-            Direction direction = Direction.randomDirection();
-            this.animals.add(new Animal(position, direction, this.map, this.config));
-        }
+        IntStream.range(0, total).forEach(i -> {
+            this.animals
+                    .add(new Animal(
+                            this.map.getRandomPosition(),
+                            Direction.randomDirection(),
+                            this.map,
+                            this.config));
+        });
     }
 
     // stats, terrible I know
@@ -82,9 +86,7 @@ public class Simulation {
     }
 
     private void moveAnimals() {
-        for (Animal animal : this.animals) {
-            animal.move();
-        }
+        animals.forEach(animal -> animal.move());
     }
 
     private void breedAnimals(Tile[][] tiles) {

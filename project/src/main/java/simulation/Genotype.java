@@ -1,36 +1,49 @@
 package simulation;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class Genotype {
-    private final int min_gene = 0;
-    private final int max_gene = 7;
+    public static final int MAX_GENE_VALUE = Direction.size - 1;
+    public static final int MIN_GENE_VALUE = 0;
 
-    private final int[] genes;
-    private final int number_of_genes;
-    private int gene_index = 0;
+    private final ArrayList<Integer> genes;
+    private final int genes_count;
+    private Iterator<Integer> iter;
+    private Integer current_gene;
 
-    public Genotype(int number_of_genes) {
-        this.number_of_genes = number_of_genes;
-        this.genes = random_genes(number_of_genes);
+    public Genotype(int genes_count) {
+        this.genes_count = genes_count;
+        this.genes = getRandomGenes(genes_count);
+        this.iter = genes.iterator();
+        this.current_gene = iter.next();
     }
 
     public void advance_gene() {
-        this.gene_index = (this.gene_index + 1) % this.number_of_genes;
-    }
-
-    private int[] random_genes(int number_of_genes) {
-        int[] result = new int[number_of_genes];
-        for (int i = 0; i < number_of_genes; i++) {
-            result[i] = min_gene + (int) (Math.random() * ((max_gene - min_gene) + 1));
+        if (iter.hasNext()) {
+            current_gene = iter.next();
+        } else {
+            iter = genes.iterator();
+            current_gene = iter.next();
         }
-        return result;
     }
 
-    /*
-     * For a given current animal direction returns the direction in which the
-     * animal should move. When called it will NOT advance to the next gene so
-     * moving to the next gene has to be handled outside of this class.
-     */
-    public int get_rotation() {
-        return genes[gene_index];
+    private int randomGene() {
+        return MIN_GENE_VALUE + (int) (Math.random() * ((MAX_GENE_VALUE - MIN_GENE_VALUE) + 1));
+    }
+
+    private ArrayList<Integer> getRandomGenes(int genes_count) {
+        return IntStream.range(0, genes_count).map(i -> randomGene())
+                .boxed()
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public int getRotation() {
+        return current_gene;
     }
 }

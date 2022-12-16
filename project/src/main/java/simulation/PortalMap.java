@@ -7,10 +7,9 @@ public class PortalMap implements IMap {
     private final Tile[][] tiles;
     private final Configuration config;
 
-
-    public PortalMap(int width, int height, Configuration config) {
-        this.width = width;
-        this.height = height;
+    public PortalMap(Configuration config) {
+        this.width = config.getWidth();
+        this.height = config.getHeight();
         this.config = config;
         tiles = new Tile[height + 1][width + 1];
         for (int i = 0; i < tiles.length; i++) {
@@ -27,7 +26,12 @@ public class PortalMap implements IMap {
     }
 
     @Override
-    public Vector2d randomAnimalPosition() {
+    public Vector2d newAnimalPosition(Vector2d desired_position) {
+        return getRandomPosition();
+    }
+
+    @Override
+    public Vector2d getRandomPosition() {
         int x = (int) (Math.random() * (this.width + 1));
         int y = (int) (Math.random() * (this.height + 1));
         return new Vector2d(x, y);
@@ -36,7 +40,7 @@ public class PortalMap implements IMap {
     @Override
     public void growPlants(int n) {
         for (int i = 0; i < n; i++) {
-            Vector2d position = randomAnimalPosition();
+            Vector2d position = getRandomPosition();
             if (tiles[position.x][position.y].getPlant() == null)
                 tiles[position.x][position.y].placePlant(new Plant(config.getPlantEnergy()));
         }
@@ -50,7 +54,7 @@ public class PortalMap implements IMap {
             }
         }
 
-        for(Animal animal : animals) {
+        for (Animal animal : animals) {
             Vector2d pos = animal.getPosition();
             tiles[pos.x][pos.y].addAnimal(animal);
         }
