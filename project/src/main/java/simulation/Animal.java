@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 public class Animal {
     private final Genotype genotype;
@@ -40,13 +40,13 @@ public class Animal {
     }
 
     public void move() {
-        this.direction = this.direction.rotate(this.genotype.get_rotation());
+        this.direction = this.direction.rotate(this.genotype.getRotation());
         this.genotype.advance_gene();
         Vector2d desired_position = this.position.add(this.direction.toUnitVector());
         if (this.map.isLegalPosition(desired_position)) {
             this.position = desired_position;
         } else {
-            this.position = this.map.randomAnimalPosition();
+            this.position = this.map.newAnimalPosition(desired_position);
             this.energy -= simulation_config.getEnergyPenalty();
         }
     }

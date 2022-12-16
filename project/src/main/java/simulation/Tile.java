@@ -1,4 +1,4 @@
-package org.example;
+package simulation;
 
 import javafx.util.Pair;
 
@@ -24,12 +24,14 @@ public class Tile {
     }
 
     public Animal getTheFittestAnimal() {
-        return animalList.stream().reduce((animal, animal2) -> animal.energy > animal2.energy ? animal : animal2).orElse(null);
+        return animalList.stream().reduce((animal, animal2) -> animal.energy > animal2.energy ? animal : animal2)
+                .orElse(null);
     }
 
     /***
      * Function to retrieve pairs of animals that want to reproduce on a given tile
      * and couples them by their descending energy
+     * 
      * @return list of pairs of animals
      */
     public List<Pair<Animal, Animal>> getBreedingPairs() {
