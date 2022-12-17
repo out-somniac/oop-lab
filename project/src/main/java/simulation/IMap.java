@@ -9,9 +9,4 @@ public interface IMap {
 
     public Vector2d getRandomPosition();
 
-    public void growPlants(int n);
-
-    void placeAnimals(List<Animal> animals);
-
-    Tile[][] getTiles();
 }
