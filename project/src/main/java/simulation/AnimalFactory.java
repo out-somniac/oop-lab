@@ -11,9 +11,9 @@ public class AnimalFactory {
         this.map = map;
     }
 
-    public Animal createAnimal(Animal parent1, Animal parent2) {
+    public Animal createAnimal(Animal parent1, Animal parent2, int currentDay) {
         assert parent1.getPosition().equals(parent2.getPosition());
-        Animal newAnimal = new Animal(parent1.getPosition(), Direction.randomDirection(), map, simulationConfig);
+        Animal newAnimal = new Animal(parent1.getPosition(), Direction.randomDirection(), map, simulationConfig, currentDay);
         newAnimal.setEnergy(simulationConfig.getCreationEnergy() * 2);
         return newAnimal;
     }
