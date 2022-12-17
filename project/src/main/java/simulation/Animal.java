@@ -7,15 +7,18 @@ public class Animal {
     private Direction direction;
     private Vector2d position;
     public int energy;
+
+    final int dayOfBirth;
     private Configuration simulationConfig;
 
-    public Animal(Vector2d position, Direction direction, IMap map, Configuration config) {
+    public Animal(Vector2d position, Direction direction, IMap map, Configuration config, int dayOfBirth) {
         this.position = position;
         this.direction = direction;
         this.genotype = new Genotype(config.getGenomeLength());
         this.map = map;
         this.energy = config.getStartingEnergy();
         this.simulationConfig = config;
+        this.dayOfBirth = dayOfBirth;
     }
 
     void setEnergy(int energy) {
