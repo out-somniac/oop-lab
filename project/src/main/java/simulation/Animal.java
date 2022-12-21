@@ -7,17 +7,22 @@ public class Animal {
     private Direction direction;
     private Vector2d position;
     public int energy;
-
     final int dayOfBirth;
-    private Configuration simulationConfig;
+
+    int nrOfChildren;
+    private final Configuration config;
 
     public Animal(Vector2d position, Direction direction, IMap map, Configuration config, int dayOfBirth) {
+        this(position, direction, map, config, new Genotype(config.getGenomeLength()), dayOfBirth);
+    }
+
+    public Animal(Vector2d position, Direction direction, IMap map, Configuration config, Genotype genotype, int dayOfBirth) {
         this.position = position;
         this.direction = direction;
-        this.genotype = new Genotype(config.getGenomeLength());
+        this.genotype = genotype;
         this.map = map;
         this.energy = config.getStartingEnergy();
-        this.simulationConfig = config;
+        this.config = config;
         this.dayOfBirth = dayOfBirth;
     }
 
@@ -50,15 +55,24 @@ public class Animal {
             this.position = desiredPosition;
         } else {
             this.position = this.map.newAnimalPosition(desiredPosition);
-            this.energy -= simulationConfig.getEnergyPenalty();
+            this.energy -= config.getEnergyPenalty();
         }
     }
 
     public boolean wantsToReproduce() {
-        return this.energy >= simulationConfig.getFullEnergy();
+        return this.energy >= config.getFullEnergy();
     }
 
     public void eatVegetation(Plant plant) {
-        this.energy = Math.min(simulationConfig.getMaxEnergy(), this.energy + plant.getEnergy());
+        this.energy = Math.min(config.getMaxEnergy(), this.energy + plant.getEnergy());
+    }
+
+    public void breed() {
+        energy -= config.getCreationEnergy();
+        nrOfChildren++;
+    }
+
+    public Genotype getGenotype() {
+        return genotype;
     }
 }

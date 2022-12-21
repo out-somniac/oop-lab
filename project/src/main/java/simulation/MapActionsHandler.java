@@ -1,6 +1,7 @@
 package simulation;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,6 +42,11 @@ public class MapActionsHandler {
         });
     }
 
+    Comparator<Animal> energyComp = Comparator.comparingInt(a -> -a.energy);
+    Comparator<Animal> ageComp = Comparator.comparingInt(a -> a.dayOfBirth);
+    Comparator<Animal> childrenCom = Comparator.comparingInt(a -> -a.nrOfChildren);
+    Comparator<Animal> animalComparator = energyComp.thenComparing(ageComp).thenComparing(childrenCom);
+
     void groupAnimals() {
         groupedAnimals = animals.stream().collect(Collectors.groupingBy(Animal::getPosition, Collectors.toList()));
     }
@@ -48,7 +54,7 @@ public class MapActionsHandler {
     void animalsEatGrass() {
         for(List<Animal> animalsAtOnePlace : groupedAnimals.values()) {
             animalsAtOnePlace.stream()
-                    .reduce((animal, animal2) -> animal.energy > animal2.energy ? animal : animal2)
+                    .min(animalComparator)
                     .ifPresent(animal -> {
                         if (vegetationModel.isPlantThere(animal.getPosition())) {
                             animal.eatVegetation(vegetationModel.getPlant(animal.getPosition()));
@@ -61,7 +67,7 @@ public class MapActionsHandler {
         for(List<Animal> animals : groupedAnimals.values()) {
             List<Animal> willingAnimals = animals.stream()
                     .filter(Animal::wantsToReproduce)
-                    .sorted(Comparator.comparingInt(animal -> -animal.energy))
+                    .sorted(animalComparator)
                     .toList();
             for (int i = 0; i < willingAnimals.size() - 1; i += 2) {
                 this.animals.add(createAnimal(willingAnimals.get(i), willingAnimals.get(i + 1)));
@@ -77,8 +83,8 @@ public class MapActionsHandler {
     }
 
     private Animal createAnimal(Animal parent1, Animal parent2) {
-        parent1.energy -= config.getCreationEnergy();
-        parent2.energy -= config.getCreationEnergy();
+        parent1.breed();
+        parent2.breed();
         Animal newAnimal = animalFactory.createAnimal(parent1, parent2, currentDay);
         return newAnimal;
     }
