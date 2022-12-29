@@ -105,4 +105,12 @@ public class Configuration {
     public int getFullEnergy() {
         return this.values.get("full_energy");
     }
+
+    public int getMinMutations() {
+        return this.values.get("min_mutations");
+    }
+
+    public int getMaxMutations() {
+        return this.values.get("max_mutations");
+    }
 }
