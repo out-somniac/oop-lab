@@ -1,15 +1,10 @@
 package simulation;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * Class responsible for managing interactions between different objects on a map.
- * It is also responsible for creating and deleting entities.
- */
-public class MapActionsHandler {
+public class SimulationEngine {
 
     private final IMap map;
     private final IVegetationModel vegetationModel;
@@ -20,11 +15,12 @@ public class MapActionsHandler {
     private int currentDay = 0;
 
 
-    public MapActionsHandler(Configuration config, IMap map, IVegetationModel vegetationModel) {
+    public SimulationEngine(Configuration config, IMap map, IVegetationModel vegetationModel) {
         this.map = map;
         this.vegetationModel = vegetationModel;
         this.config = config;
         this.animalFactory = new AnimalFactory(this.config, this.map);
+        createInitialAnimals(this.config.getInitialAnimalsTotal());
     }
 
     void moveAnimals() {
@@ -52,19 +48,19 @@ public class MapActionsHandler {
     }
 
     void animalsEatGrass() {
-        for(List<Animal> animalsAtOnePlace : groupedAnimals.values()) {
+        for (List<Animal> animalsAtOnePlace : groupedAnimals.values()) {
             animalsAtOnePlace.stream()
                     .min(animalComparator)
                     .ifPresent(animal -> {
                         if (vegetationModel.isPlantThere(animal.getPosition())) {
-                            animal.eatVegetation(vegetationModel.getPlant(animal.getPosition()));
+                            animal.eatVegetation(vegetationModel.eatPlant(animal.getPosition()));
                         }
                     });
         }
     }
 
     void breedAnimals() {
-        for(List<Animal> animals : groupedAnimals.values()) {
+        for (List<Animal> animals : groupedAnimals.values()) {
             List<Animal> willingAnimals = animals.stream()
                     .filter(Animal::wantsToReproduce)
                     .sorted(animalComparator)
@@ -74,6 +70,7 @@ public class MapActionsHandler {
             }
         }
     }
+
     void removeDeadEntities() {
         this.animals.removeIf(animal -> !animal.isAlive());
     }
@@ -114,5 +111,21 @@ public class MapActionsHandler {
         double averageEnergy = animals.stream().mapToInt(animals -> animals.energy).average().orElse(0f);
         long bornAnimals = animals.stream().filter(animal -> animal.dayOfBirth == currentDay).count();
         return new Statistics(currentDay, animals.size(), bornAnimals, averageEnergy, vegetationModel.plantCount());
+    }
+
+
+    public Map<Vector2d, Tile> getTiles() {
+        Map<Vector2d, Tile> objectMap = new HashMap<>();
+        for (Map.Entry<Vector2d, List<Animal>> animalEntry : groupedAnimals.entrySet()) {
+            Vector2d thisPosition = animalEntry.getKey();
+            objectMap.put(thisPosition, new Tile(vegetationModel.isPlantThere(thisPosition), animalEntry.getValue()));
+        }
+        for (Vector2d position : vegetationModel.getPlantPosition()) {
+            if (!objectMap.containsKey(position)) {
+                objectMap.put(position, new Tile(true, null));
+            }
+        }
+        return objectMap;
+
     }
 }
