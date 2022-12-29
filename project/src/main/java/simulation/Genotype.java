@@ -1,6 +1,7 @@
 package simulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -49,11 +50,10 @@ public class Genotype {
     }
 
     public void mutateGenes(int nrOfMutations, int maxDifference) {
-        int n = this.genes.size();
         for (int i = 0; i < nrOfMutations; i++) {
             int k = ThreadLocalRandom.current().nextInt(0, this.genes.size());
-            this.genes.set(k, (this.genes.get(k) + n +
-                    ThreadLocalRandom.current().nextInt(-maxDifference, maxDifference + 1)) % n);
+            this.genes.set(k, (this.genes.get(k) + Direction.size +
+                    ThreadLocalRandom.current().nextInt(-maxDifference, maxDifference + 1)) % Direction.size);
         }
     }
 
@@ -74,5 +74,13 @@ public class Genotype {
         List<Integer> geneList = new ArrayList<>(gen1.genes.subList(0, nrOfGenes1));
         geneList.addAll(gen2.genes.subList(gen2.genes.size() - nrOfGenes2, gen2.genes.size()));
         return new Genotype(geneList);
+    }
+
+    @Override
+    public String toString() {
+        return """
+                current gene: %d
+                genotype: %s
+                """.formatted(currentGene, genes);
     }
 }

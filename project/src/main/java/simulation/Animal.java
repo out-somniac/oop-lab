@@ -32,7 +32,10 @@ public class Animal {
 
     @Override
     public String toString() {
-        return this.position.toString() + " " + this.direction.toString();
+        return """
+                Animal at %s, orientation: %s
+                energy: %d 
+                """.formatted(position, direction, energy);
     }
 
     public Direction getDirection() {

@@ -23,7 +23,7 @@ public class LushEquatorsVegetation implements IVegetationModel {
 
     @Override
     public void growPlants(int n) {
-        int tries = 5 * n;
+        int tries = 10 * n;
         while (n > 0 && tries > 0) {
             Vector2d newPosition = getRandomPosition();
             if (!isPlantThere(newPosition)) {
@@ -57,8 +57,8 @@ public class LushEquatorsVegetation implements IVegetationModel {
     }
 
     private Vector2d getRandomPosition() {
-        int x = (int) (Math.max(0, Math.min(1, random.nextGaussian(0.5, 0.5))) * (this.width + 1));
-        int y = (int) (Math.max(0, Math.min(1, random.nextGaussian(0.5, 0.5))) * (this.height + 1));
+        int x = (int) (Math.max(0, Math.min(1, random.nextGaussian(0.5, 0.11))) * (this.width + 1));
+        int y = (int) (Math.max(0, Math.min(1, random.nextGaussian(0.5, 0.11))) * (this.height + 1));
         return new Vector2d(x, y);
     }
 }
