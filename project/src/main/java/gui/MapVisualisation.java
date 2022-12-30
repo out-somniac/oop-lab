@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
@@ -7,11 +8,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import simulation.Animal;
-import simulation.SimulationEngine;
-import simulation.Tile;
-import simulation.Vector2d;
+import simulation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,39 +23,56 @@ public class MapVisualisation extends GridPane {
 
     private final SimulationEngine simulation;
 
-    MapVisualisation(int rowCount, int colCount, double cellSize, SimulationEngine simulation) {
+    private Configuration config;
 
-        this.rowCount = rowCount;
-        this.colCount = colCount;
+    private Map<Vector2d, Tile> tileMap = new HashMap<>();
+
+
+    MapVisualisation(Configuration config, double cellSize, SimulationEngine simulation) {
+        this.config = config;
+        this.rowCount = config.getHeight();
+        this.colCount = config.getHeight();
         this.cellSize = cellSize;
         this.simulation = simulation;
+        this.waterWidth = 20;
+
+
         createSimulationGrid();
         addMouseEvent();
-        this.waterWidth = 20;
         setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(waterWidth, waterWidth, waterWidth, waterWidth))));
     }
 
-    private void addMouseEvent() {
+    void addMouseEvent() {
         setCursor(Cursor.HAND);
         setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
 
-            if(x <= waterWidth || y <= waterWidth || x - waterWidth >= colCount * cellSize || y  - waterWidth >= rowCount * cellSize)
+            if (x <= waterWidth || y <= waterWidth || x - waterWidth >= colCount * cellSize || y - waterWidth >= rowCount * cellSize)
                 return;
 
             // Calculate the row and column indices of the clicked cell
             int row = (int) ((y - waterWidth) / cellSize);
             int col = (int) ((x - waterWidth) / cellSize);
 
-            drawCircleAndWriteNumber(col, row, row * colCount + col);
-
+//            drawCircleWithText(col, row, String.valueOf(row * colCount + col), 1);
+            Vector2d position = new Vector2d(col, row);
+            if(this.tileMap.containsKey(position)) {
+                List<Animal> animalList = this.tileMap.get(position).animalList();
+                if(animalList != null && animalList.size() > 0) {
+                    Animal animal = animalList.get(0);
+                    System.out.println(animal);
+                    System.out.println(animal.getGenotype());
+                }
+            }
         });
-
     }
+    Color noEnergyColor = Color.valueOf("#ff0000");
+    Color maxEnergyColor = Color.valueOf("#13b6ff");
+
 
     private void createSimulationGrid() {
-        // create x-axis column
+//         create x-axis column
         for(int i = 0; i < colCount; ++i) {
             getColumnConstraints().add(new ColumnConstraints(cellSize));
         }
@@ -75,20 +91,22 @@ public class MapVisualisation extends GridPane {
         }
     }
 
-    public void drawCircleAndWriteNumber( int x, int y, int number) {
+    public void drawCircleWithText(int x, int y, String str, double colorRatio) {
         StackPane stackPane = (StackPane) getChildren().get(y * colCount + x);
 
-        int z = (int) cellSize/2;
-        Circle circle = new Circle(z, z, z - 2);
-        circle.setFill(Color.BLANCHEDALMOND);
-        Text text = new Text(Integer.toString(number));
+        int r = (int) cellSize/2;
+        Circle circle = new Circle(r, r, r - 2);
+        circle.setFill(noEnergyColor.interpolate(maxEnergyColor, colorRatio));
+        Text text = new Text(str);
         text.setFill(Color.BLACK);
         text.setStyle("-fx-font-size: 12pt");
         stackPane.getChildren().addAll(circle, text);
-        // Center the text inside the square
+        stackPane.setAlignment(Pos.CENTER);
     }
 
     public void draw(Map<Vector2d, Tile> tileMap) {
+        this.tileMap = tileMap;
+
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
                 StackPane stackPane = (StackPane) getChildren().get(i * colCount + j);
@@ -98,12 +116,16 @@ public class MapVisualisation extends GridPane {
                 Tile tile = tileMap.get(new Vector2d(j, i));
                 if (tile != null) {
                     if (tile.hasPlant()) {
-                        Rectangle rect = new Rectangle(0, 100, cellSize, cellSize / 2);
+                        Rectangle rect = new Rectangle(0, 100, cellSize - 2, cellSize / 2);
                         rect.setFill(Color.GREEN);
                         stackPane.getChildren().add(rect);
                     }
-                    if (tile.animalList() != null) {
-                        drawCircleAndWriteNumber(j, i, tile.animalList().size());
+                    List<Animal> animalList = tile.animalList();
+                    if (animalList != null) {
+                        drawCircleWithText(j, i,
+                                animalList.size() > 1 ? String.valueOf(animalList.size()) : "",
+                                animalList.stream().mapToInt(animal -> animal.energy).average().orElse(0f)
+                                        / config.getMaxEnergy());
                     }
                 }
             }

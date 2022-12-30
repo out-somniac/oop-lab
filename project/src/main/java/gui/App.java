@@ -66,7 +66,7 @@ public class App extends Application {
             return;
         }
 
-        simulationGrid = new MapVisualisation(config.getHeight(), config.getWidth(), 30, simulation);
+        simulationGrid = new MapVisualisation(config, 30, simulation);
 
         HBox hBox = new HBox(stats, simulationGrid);
 
@@ -109,7 +109,8 @@ public class App extends Application {
         return menuBar;
     }
 
-
+    public void trackAnimal() {
+    }
 
 
 }
