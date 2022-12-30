@@ -17,7 +17,7 @@ public class Configuration {
     public static final String[] requiredKeys = { "width", "height", "plants_initial_total", "plant_energy",
             "plant_growth",
             "animals_initial_total", "starting_energy", "full_energy", "max_energy", "daily_energy_loss",
-            "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty" };
+            "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty", "frame_rate" };
 
     private boolean isValid() {
         if (this.getWidth() > 100 || this.getHeight() > 100) {
@@ -172,8 +172,13 @@ public class Configuration {
         return this.values.get("max_mutations");
     }
 
+    public int getFrameRate() {
+        return this.values.get("frame_rate");
+    }
+
     public String[] getAllFields() {
-        return Arrays.stream(this.requiredKeys).map(key -> this.values.get(key)).map(value -> Integer.toString(value))
+        return Arrays.stream(Configuration.requiredKeys).map(key -> this.values.get(key))
+                .map(value -> Integer.toString(value))
                 .toArray(String[]::new);
     }
 }

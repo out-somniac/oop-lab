@@ -103,7 +103,7 @@ public class App extends Application {
         simBox.setAlignment(Pos.TOP_CENTER);
         HBox hBox = new HBox(stats, simBox);
 
-        simulationThread = new SimulationThread(simulation, this, stepTime);
+        simulationThread = new SimulationThread(simulation, this, config.getFrameRate());
         return new Scene(hBox);
     }
 
