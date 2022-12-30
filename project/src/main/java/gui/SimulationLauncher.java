@@ -76,11 +76,12 @@ public class SimulationLauncher extends Application {
         this.mainPane.setCenter(formVbox);
         this.mainPane.setBottom(controls);
 
+        Platform.setImplicitExit(true);
+
         Scene scene = new Scene(mainPane, appWidthPx, appHeightPx);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Animals Simulation");
         primaryStage.show();
-
     }
 
     private MenuBar createNavBar() {
