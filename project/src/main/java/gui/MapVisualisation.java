@@ -22,24 +22,25 @@ public class MapVisualisation extends GridPane {
     private final double waterWidth;
 
     private final SimulationEngine simulation;
+    private final App app;
 
     private Configuration config;
 
     private Map<Vector2d, Tile> tileMap = new HashMap<>();
 
 
-    MapVisualisation(Configuration config, double cellSize, SimulationEngine simulation) {
+    MapVisualisation(Configuration config, double cellSize, SimulationEngine simulation, App app) {
         this.config = config;
         this.rowCount = config.getHeight();
         this.colCount = config.getHeight();
         this.cellSize = cellSize;
         this.simulation = simulation;
+        this.app = app;
         this.waterWidth = 20;
-
 
         createSimulationGrid();
         addMouseEvent();
-        setBorder(new Border(new BorderStroke(Color.DARKBLUE, BorderStrokeStyle.SOLID, null, new BorderWidths(waterWidth, waterWidth, waterWidth, waterWidth))));
+
     }
 
     void addMouseEvent() {
@@ -57,14 +58,19 @@ public class MapVisualisation extends GridPane {
 
 //            drawCircleWithText(col, row, String.valueOf(row * colCount + col), 1);
             Vector2d position = new Vector2d(col, row);
-            if(this.tileMap.containsKey(position)) {
-                List<Animal> animalList = this.tileMap.get(position).animalList();
-                if(animalList != null && animalList.size() > 0) {
-                    Animal animal = animalList.get(0);
-                    System.out.println(animal);
-                    System.out.println(animal.getGenotype());
-                }
+            Animal animal;
+            List<Animal> animalList = this.tileMap.containsKey(position) ? this.tileMap.get(position).animalList() : null;
+            if(animalList != null && animalList.size() > 0) {
+                animal = animalList.get(0);
+            } else {
+                animal = null;
             }
+//                    System.out.println(animal);
+//                    System.out.println(animal.getGenotype());
+
+            app.trackAnimal(animal);
+
+
         });
     }
     Color noEnergyColor = Color.valueOf("#ff0000");
@@ -89,6 +95,9 @@ public class MapVisualisation extends GridPane {
                 add(new StackPane(rect), j, i, 1, 1);
             }
         }
+        setBorder(new Border(new BorderStroke(Color.DARKRED,
+                BorderStrokeStyle.SOLID, null,
+                new BorderWidths(waterWidth, waterWidth, waterWidth, waterWidth))));
     }
 
     public void drawCircleWithText(int x, int y, String str, double colorRatio) {
