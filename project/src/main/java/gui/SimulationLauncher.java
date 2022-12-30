@@ -20,6 +20,7 @@ import simulation.exceptions.InvalidConfiguration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.ObjectInputFilter.Config;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +33,11 @@ public class SimulationLauncher extends Application {
     private Label infoLabel = new Label("");
     private BorderPane mainPane = new BorderPane();
 
+    private Configuration getCurrentConfig() throws InvalidConfiguration {
+        String[] field_values = fields.stream().map(textField -> textField.getText()).toArray(String[]::new);
+        return new Configuration(field_values);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -43,11 +49,9 @@ public class SimulationLauncher extends Application {
         launchButton.setOnAction(event -> {
             // Increment the window count
             windowCount.getAndIncrement();
-            String[] field_values = fields.stream().map(textField -> textField.getText()).toArray(String[]::new);
             Platform.runLater(() -> {
                 try {
-                    new App("Simulation #" + windowCount.get(),
-                            new Configuration(field_values)).start(new Stage());
+                    new App("Simulation #" + windowCount.get(), getCurrentConfig()).start(new Stage());
                 } catch (InvalidConfiguration e) {
                     this.infoLabel.setText("Invalid configuration");
                 }
@@ -117,6 +121,17 @@ public class SimulationLauncher extends Application {
             }
         });
         MenuItem saveConfig = new MenuItem("Save Config");
+        saveConfig.setOnAction(event -> {
+            try {
+                File file = this.getUserFilePath();
+                Configuration config = this.getCurrentConfig();
+                config.saveToFile(file.getAbsolutePath());
+            } catch (IOException ex) {
+                this.infoLabel.setText("Can not open configuration file!");
+            } catch (InvalidConfiguration ex) {
+                this.infoLabel.setText("Invalid configuration");
+            }
+        });
         configMenu.getItems().addAll(loadConfig, saveConfig);
 
         // Create a menu bar and add the three menus

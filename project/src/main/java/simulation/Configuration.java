@@ -1,6 +1,7 @@
 package simulation;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,6 +67,18 @@ public class Configuration {
             throw new InvalidConfiguration("Invalid key-value pair in configuration file on line " + lineNo,
                     e.getCause());
         }
+    }
+
+    public void saveToFile(String filepath) throws IOException {
+        FileWriter writer = new FileWriter(filepath);
+        Arrays.stream(this.requiredKeys).forEach(key -> {
+            try {
+                writer.write(key + "=" + this.values.get(key) + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        writer.close();
     }
 
     private boolean hasAllKeys() {
