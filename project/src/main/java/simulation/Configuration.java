@@ -129,4 +129,9 @@ public class Configuration {
     public int getMaxMutations() {
         return this.values.get("max_mutations");
     }
+
+    public String[] getAllFields() {
+        return Arrays.stream(this.requiredKeys).map(key -> this.values.get(key)).map(value -> Integer.toString(value))
+                .toArray(String[]::new);
+    }
 }

@@ -9,21 +9,28 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import simulation.Configuration;
 import simulation.LushEquatorsVegetation;
 import simulation.PortalMap;
 import simulation.SimulationEngine;
 import simulation.exceptions.InvalidConfiguration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.ObjectInputFilter.Config;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimulationLauncher extends Application {
 
     private double appWidthPx = 500;
-    private double appHeightPx = 500;
+    private double appHeightPx = 800;
     private ArrayList<TextField> fields = new ArrayList<TextField>();
+    private Label infoLabel = new Label("");
+    private BorderPane mainPane = new BorderPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -42,7 +49,7 @@ public class SimulationLauncher extends Application {
                     new App("Simulation #" + windowCount.get(),
                             new Configuration(field_values)).start(new Stage());
                 } catch (InvalidConfiguration e) {
-                    e.printStackTrace();
+                    this.infoLabel.setText("Invalid configuration");
                 }
             });
         });
@@ -75,16 +82,18 @@ public class SimulationLauncher extends Application {
         launchButton.setAlignment(Pos.CENTER);
         formVbox.getChildren().add(controls);
 
-        BorderPane mainPane = new BorderPane();
-        mainPane.setPadding(new Insets(0, 0, 20, 0));
-        mainPane.setTop(createNavBar());
-        mainPane.setCenter(formVbox);
-        mainPane.setBottom(controls);
+        formVbox.getChildren().add(infoLabel);
+
+        this.mainPane.setPadding(new Insets(0, 0, 20, 0));
+        this.mainPane.setTop(createNavBar());
+        this.mainPane.setCenter(formVbox);
+        this.mainPane.setBottom(controls);
 
         Scene scene = new Scene(mainPane, appWidthPx, appHeightPx);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Animals Simulation");
         primaryStage.show();
+
     }
 
     private MenuBar createNavBar() {
@@ -93,6 +102,20 @@ public class SimulationLauncher extends Application {
 
         // Create a submenu for the configuration menu
         MenuItem loadConfig = new MenuItem("Load Config");
+        loadConfig.setOnAction(event -> {
+            try {
+                File file = this.getUserFilePath();
+                Configuration config = new Configuration(file.getAbsolutePath());
+                String[] configFields = config.getAllFields();
+                for (int i = 0; i < configFields.length; i++) {
+                    this.fields.get(i).setText(configFields[i]);
+                }
+            } catch (FileNotFoundException ex) {
+                this.infoLabel.setText("Can not open configuration file!");
+            } catch (InvalidConfiguration ex) {
+                this.infoLabel.setText("Invalid configuration");
+            }
+        });
         MenuItem saveConfig = new MenuItem("Save Config");
         configMenu.getItems().addAll(loadConfig, saveConfig);
 
@@ -100,5 +123,19 @@ public class SimulationLauncher extends Application {
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(configMenu);
         return menuBar;
+    }
+
+    private File getUserFilePath() throws FileNotFoundException {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Configuration filepath");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("CONFIG", "*.conf"));
+
+        File file = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
+        if (file != null) {
+            return file;
+        }
+        throw new FileNotFoundException("Configuration file not found");
     }
 }
