@@ -14,12 +14,15 @@ public class SimulationEngine {
     private final Configuration config;
     private int currentDay = 0;
 
+    private final Tile[][] tiles;
+
 
     public SimulationEngine(Configuration config, IMap map, IVegetationModel vegetationModel) {
         this.map = map;
         this.vegetationModel = vegetationModel;
         this.config = config;
         this.animalFactory = new AnimalFactory(this.config, this.map);
+        tiles = new Tile[config.getHeight()][config.getWidth()];
         createInitialAnimals(this.config.getInitialAnimalsTotal());
     }
 
@@ -107,25 +110,21 @@ public class SimulationEngine {
         growPlants();
     }
 
-    Statistics generateDaySummary() {
+    public Statistics generateDaySummary() {
         double averageEnergy = animals.stream().mapToInt(animals -> animals.energy).average().orElse(0f);
         long bornAnimals = animals.stream().filter(animal -> animal.dayOfBirth == currentDay).count();
         return new Statistics(currentDay, animals.size(), bornAnimals, averageEnergy, vegetationModel.plantCount());
     }
 
 
-    public Map<Vector2d, Tile> getTiles() {
-        Map<Vector2d, Tile> objectMap = new HashMap<>();
-        for (Map.Entry<Vector2d, List<Animal>> animalEntry : groupedAnimals.entrySet()) {
-            Vector2d thisPosition = animalEntry.getKey();
-            objectMap.put(thisPosition, new Tile(vegetationModel.isPlantThere(thisPosition), animalEntry.getValue()));
-        }
-        for (Vector2d position : vegetationModel.getPlantPosition()) {
-            if (!objectMap.containsKey(position)) {
-                objectMap.put(position, new Tile(true, null));
+    public Tile[][] getTiles() {
+        for(int y = 0; y < config.getHeight(); ++y) {
+            for (int x = 0; x < config.getWidth(); ++x) {
+                Vector2d position = new Vector2d(x, y);
+                tiles[y][x] = new Tile(vegetationModel.isPlantThere(position), groupedAnimals.get(position));
+
             }
         }
-        return objectMap;
-
+        return tiles;
     }
 }

@@ -8,42 +8,63 @@ import javafx.scene.chart.XYChart;
 
 public class ChartManager {
 
-    NumberAxis xAxis;
-    NumberAxis yAxis;
+
     int nrOfDays;
+    int curIndex = 0;
 
     private final LineChart<Number, Number> lineChart;
 
+    XYChart.Series<Number, Number> animalSeries = new XYChart.Series<>();
+    XYChart.Series<Number, Number> plantsSeries = new XYChart.Series<>();
+
+    ObservableList<XYChart.Data<Number, Number>> animalsData = FXCollections.observableArrayList();
+    ObservableList<XYChart.Data<Number, Number>> plantsData = FXCollections.observableArrayList();
+
     public ChartManager(int n) {
-        xAxis = new NumberAxis();
+
+        this.nrOfDays = n;
+
+        lineChart = createLineChart();
+        lineChart.setAnimated(false);
+
+        animalSeries.setName("Number of animals");
+        plantsSeries.setName("Number of plants");
+
+        for (int i = 0; i < nrOfDays; i++) {
+            animalsData.add(new XYChart.Data<>(i, 0));
+            plantsData.add(new XYChart.Data<>(i, 0));
+        }
+
+        animalSeries.setData(animalsData);
+        plantsSeries.setData(plantsData);
+
+        lineChart.getData().add(animalSeries);
+        lineChart.getData().add(plantsSeries);
+        lineChart.setCreateSymbols(false);
+
+    }
+
+    private LineChart<Number, Number> createLineChart() {
+        NumberAxis xAxis = new NumberAxis();
         xAxis.setTickLabelsVisible(false);
         xAxis.setMinorTickVisible(false);
 
-        yAxis = new NumberAxis();
-        yAxis.setTickLabelsVisible(false);
+        NumberAxis yAxis = new NumberAxis();
+//        yAxis.setTickLabelsVisible(false);
         yAxis.setMinorTickVisible(false);
 
-        lineChart = new LineChart<>(xAxis, yAxis);
-        this.nrOfDays = n;
-
-
-        // Create the data for the first series
-        XYChart.Series<Number, Number> series1 = new XYChart.Series<>();
-        series1.setName("Number of animals");
-
-        ObservableList<XYChart.Data<Number, Number>> series1Data = FXCollections.observableArrayList();
-        for (int i = 0; i < nrOfDays; i++) {
-            XYChart.Data<Number, Number> dataPoint = new XYChart.Data<>(i, i*i);
-            series1Data.add(dataPoint);
-        }
-        series1.setData(series1Data);
-        // Add the series to the line chart
-        lineChart.getData().add(series1);
-        lineChart.setCreateSymbols(false);
-
+        return new LineChart<>(xAxis, yAxis);
     }
 
     public LineChart<Number, Number> getLineChart() {
         return lineChart;
     }
+
+    public void updateGraph(int plantCount, int animalCount) {
+        plantsData.get(curIndex).setYValue(plantCount);
+        animalsData.get(curIndex).setYValue(animalCount);
+        curIndex = (curIndex + 1) % nrOfDays;
+    }
+
+
 }

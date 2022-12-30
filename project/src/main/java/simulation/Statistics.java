@@ -1,21 +1,6 @@
 package simulation;
 
-public class Statistics {
-
-    private final int dayNr;
-    private final int nrOfAnimals;
-    private final long animalsBorn;
-    private final double averageEnergy;
-    private final int plantCount;
-
-    public Statistics(int dayNr, int nrOfAnimals, long animalsBorn, double averageEnergy, int plantCount) {
-        this.dayNr = dayNr;
-        this.nrOfAnimals = nrOfAnimals;
-        this.animalsBorn = animalsBorn;
-
-        this.averageEnergy = averageEnergy;
-        this.plantCount = plantCount;
-    }
+public record Statistics(int dayNr, int nrOfAnimals, long animalsBorn, double averageEnergy, int plantCount) {
 
     @Override
     public String toString() {
