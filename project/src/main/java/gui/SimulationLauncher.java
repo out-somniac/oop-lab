@@ -28,6 +28,10 @@ public class SimulationLauncher extends Application {
     private Label infoLabel = new Label("");
     private BorderPane mainPane = new BorderPane();
 
+    private String toSpaced(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase().replaceAll("_", " ");
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Button launchButton = new Button("Launch New Simulation");
@@ -53,7 +57,7 @@ public class SimulationLauncher extends Application {
             hbox.setAlignment(Pos.CENTER);
             hbox.setSpacing(10);
 
-            Label label = new Label(fieldNames[i]);
+            Label label = new Label(toSpaced(fieldNames[i]));
             label.setPrefWidth(200);
             this.fields.add(new TextField());
             hbox.getChildren().addAll(label, this.fields.get(i));
