@@ -2,13 +2,16 @@ package gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import simulation.*;
-import simulation.exceptions.InvalidConfiguration;
 
 import java.util.Map;
 
@@ -17,23 +20,46 @@ public class App extends Application {
     private double appWidthPx = 1400;
     private double appHeightPx = 900;
 
+    private final Border SIMPLE_BORDER = new Border(new BorderStroke(Color.BLACK,
+            BorderStrokeStyle.SOLID, null,
+            new BorderWidths(1)));
+
     private MapVisualisation simulationGrid;
 
-    private Menu startSimMenu;
-    private Menu pauseSimMenu;
+
 
     private SimulationThread simulationThread;
     private Button pauseButton;
     private Button startButton;
+
+    String windowName;
 
     // delay between day simulation
     private int stepTime = 100;
 
     private Configuration config;
 
+    private AnimalVisualisation animalVisualisation = new AnimalVisualisation();
+
+    private ChartManager chartManager;
+
+    App(String windowName, Configuration config) {
+        super();
+        this.windowName = windowName;
+        this.config = config;
+    }
+
     @Override
     public void start(Stage primaryStage) {
 
+        primaryStage.setScene(generateScene());
+        primaryStage.setTitle(windowName);
+        primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> simulationThread.killThread());
+
+    }
+
+    private Scene generateScene() {
         VBox stats = new VBox(5);
         pauseButton = new Button("Pause");
         pauseButton.setPrefWidth(150);
@@ -54,64 +80,82 @@ public class App extends Application {
             simulationThread.start();
         });
 
-        stats.getChildren().addAll(pauseButton,  startButton, new Text("Animal Details"), new Text("Simulation Data"));
-        stats.setMinWidth(300);
-        stats.setMaxWidth(300);
-        SimulationEngine simulation;
-        try {
-            config = new Configuration("src/main/resources/correct.conf");
-            simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
-        } catch (InvalidConfiguration e) {
-            e.printStackTrace();
-            return;
-        }
+        animalVisualisation.setBorder(SIMPLE_BORDER);
 
-        simulationGrid = new MapVisualisation(config, 30, simulation);
+        HBox buttonsBox = new HBox(10, startButton, pauseButton);
+        buttonsBox.setAlignment(Pos.TOP_CENTER);
+
+        stats.getChildren().addAll(buttonsBox, animalVisualisation);
+        stats.setMinWidth(400);
+        stats.setMaxWidth(600);
+        stats.setPadding(new Insets(10));
+        stats.setAlignment(Pos.TOP_CENTER);
+
+        int displayNDays = 100;
+
+        chartManager = new ChartManager(displayNDays);
+        chartManager.getLineChart().setBorder(SIMPLE_BORDER);
+        chartManager.getLineChart().setTitle("Animal and plant population graph");
+        stats.getChildren().add(chartManager.getLineChart());
+
+
+        SimulationEngine simulation;
+        simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
+
+
+        simulationGrid = new MapVisualisation(config, 30, simulation, this);
 
         HBox hBox = new HBox(stats, simulationGrid);
 
         simulationThread = new SimulationThread(simulation, this, stepTime);
 
-        VBox mainElement = new VBox(createNavBar(), hBox);
+
+//        TableView<Animal> animalTable = createTable();
+//        animalTable.setItems(new ObservableListWrapper<>(simulation.getAnimals()));
+//        stats.getChildren().add(animalTable);
 
 
-        Scene scene = new Scene(mainElement, appWidthPx, appHeightPx);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Animals Simulation");
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> simulationThread.killThread());
+        return new Scene(hBox);
     }
 
+    private TableView<Animal> createTable() {
+        TableView<Animal> animalTable = new TableView<>();
+
+        animalTable.setStyle("-fx-font-weight: bold");
+        TableColumn<Animal, String> col1 = new TableColumn<>("Position");
+        col1.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getPosition().toString()));
+
+        TableColumn<Animal, String> col2 = new TableColumn<>("Direction");
+        col2.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDirection().toString()));
+
+        TableColumn<Animal, Integer> col3 = new TableColumn<>("Energy");
+        col3.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().energy));
+
+        TableColumn<Animal, Integer> col4 = new TableColumn<>("Day of birth");
+        col4.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().dayOfBirth));
+
+        TableColumn<Animal, Integer> col5 = new TableColumn<>("Children Count");
+        col5.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getNrOfChildren()));
+
+        return animalTable;
+    }
+
+    // the app pauses the simulation engine until it finishes rendering the current frame
     public void renderMap(Map<Vector2d, Tile> tileMap) {
-        Platform.runLater(() -> simulationGrid.draw(tileMap));
+        simulationThread.setPaused(true);
+        Platform.runLater(() -> {
+            simulationGrid.draw(tileMap);
+            simulationThread.setPaused(false);
+            animalVisualisation.update();
+        });
     }
 
-    private MenuBar createNavBar() {
-        Menu configMenu = new Menu("_Configuration");
-        configMenu.setMnemonicParsing(true);
-        startSimMenu = new Menu("_Start Simulation");
-        startSimMenu.setMnemonicParsing(true);
-        pauseSimMenu = new Menu("_Pause Simulation");
-        pauseSimMenu.setMnemonicParsing(true);
+    public void trackAnimal(Animal animal) {
+        Platform.runLater(() -> {
+            animalVisualisation.visualizeAnimal(animal);
+        });
 
-        // Create a submenu for the configuration menu
-        MenuItem loadConfig = new MenuItem("_Load Config");
-        loadConfig.setMnemonicParsing(true);
-        MenuItem saveConfig = new MenuItem("_Save Config");
-        saveConfig.setMnemonicParsing(true);
-        MenuItem createConfig = new MenuItem("_Create Config");
-        createConfig.setMnemonicParsing(true);
-        configMenu.getItems().addAll(loadConfig, saveConfig, createConfig);
-
-        // Create a menu bar and add the three menus
-        MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(configMenu, startSimMenu, pauseSimMenu);
-        return menuBar;
-    }
-
-    public void trackAnimal() {
     }
 
 
 }
-
