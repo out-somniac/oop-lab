@@ -2,7 +2,6 @@ package gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,8 +10,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import simulation.*;
-
-import java.util.Map;
 
 public class App extends Application {
 
@@ -35,15 +32,10 @@ public class App extends Application {
 
     // delay between day simulation
     private int stepTime = 200;
-
     private Configuration config;
-
     private AnimalVisualisation animalVisualisation = new AnimalVisualisation();
-
     private ChartManager chartManager;
-
     private SimulationEngine simulation;
-
     private volatile boolean pausedByUser = false;
 
     App(String windowName, Configuration config) {
@@ -58,7 +50,7 @@ public class App extends Application {
         primaryStage.setScene(generateScene());
         primaryStage.setTitle(windowName);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> simulationThread.killThread());
+        primaryStage.setOnCloseRequest(event -> this.simulationThread.killThread());
 
     }
 

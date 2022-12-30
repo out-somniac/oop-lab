@@ -14,7 +14,8 @@ import java.io.BufferedReader;
 
 public class Configuration {
     private Map<String, Integer> values = new HashMap<String, Integer>();
-    private final String[] requiredKeys = { "width", "height", "plants_initial_total", "plant_energy", "plant_growth",
+    public static final String[] requiredKeys = { "width", "height", "plants_initial_total", "plant_energy",
+            "plant_growth",
             "animals_initial_total", "starting_energy", "full_energy", "max_energy", "daily_energy_loss",
             "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty" };
 
@@ -28,7 +29,10 @@ public class Configuration {
         if (this.getInitialPlantsTotal() > this.getWidth() * this.getHeight()) {
             return false;
         }
-        return Arrays.stream(this.requiredKeys).map(key -> this.values.get(key) >= 0).reduce(true,
+        if (this.getCreationEnergy() > this.getFullEnergy()) {
+            return false;
+        }
+        return Arrays.stream(Configuration.requiredKeys).map(key -> this.values.get(key) >= 0).reduce(true,
                 (left, right) -> left && right);
     }
 

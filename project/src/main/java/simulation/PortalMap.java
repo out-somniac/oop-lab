@@ -1,7 +1,5 @@
 package simulation;
 
-import java.util.List;
-
 public class PortalMap implements IMap {
     private final int width, height;
     private final Configuration config;

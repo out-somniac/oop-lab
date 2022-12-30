@@ -1,6 +1,5 @@
 package simulation;
 
-import gui.App;
 import gui.SimulationLauncher;
 import javafx.application.Application;
 

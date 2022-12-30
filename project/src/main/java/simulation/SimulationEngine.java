@@ -16,7 +16,6 @@ public class SimulationEngine {
 
     private final Tile[][] tiles;
 
-
     public SimulationEngine(Configuration config, IMap map, IVegetationModel vegetationModel) {
         this.map = map;
         this.vegetationModel = vegetationModel;
@@ -32,12 +31,11 @@ public class SimulationEngine {
 
     void createInitialAnimals(int n) {
         IntStream.range(0, n).forEach(i -> {
-            this.animals
-                    .add(new Animal(
-                            this.map.getRandomPosition(),
-                            Direction.randomDirection(),
-                            this.map,
-                            this.config, 0));
+            this.animals.add(new Animal(
+                    this.map.getRandomPosition(),
+                    Direction.randomDirection(),
+                    this.map,
+                    this.config, 0));
         });
     }
 
@@ -51,8 +49,8 @@ public class SimulationEngine {
     }
 
     void animalsEatGrass() {
-        for (List<Animal> animalsAtOnePlace : groupedAnimals.values()) {
-            animalsAtOnePlace.stream()
+        for (List<Animal> animalsOnTilePlace : groupedAnimals.values()) {
+            animalsOnTilePlace.stream()
                     .min(animalComparator)
                     .ifPresent(animal -> {
                         if (vegetationModel.isPlantThere(animal.getPosition())) {
@@ -116,9 +114,8 @@ public class SimulationEngine {
         return new Statistics(currentDay, animals.size(), bornAnimals, averageEnergy, vegetationModel.plantCount());
     }
 
-
     public Tile[][] getTiles() {
-        for(int y = 0; y < config.getHeight(); ++y) {
+        for (int y = 0; y < config.getHeight(); ++y) {
             for (int x = 0; x < config.getWidth(); ++x) {
                 Vector2d position = new Vector2d(x, y);
                 tiles[y][x] = new Tile(vegetationModel.isPlantThere(position), groupedAnimals.get(position));
