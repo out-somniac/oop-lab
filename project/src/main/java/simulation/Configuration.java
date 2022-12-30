@@ -18,6 +18,20 @@ public class Configuration {
             "animals_initial_total", "starting_energy", "full_energy", "max_energy", "daily_energy_loss",
             "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty" };
 
+    private boolean isValid() {
+        if (this.getWidth() > 100 || this.getHeight() > 100) {
+            return false;
+        }
+        if (this.getInitialAnimalsTotal() > this.getWidth() * this.getHeight()) {
+            return false;
+        }
+        if (this.getInitialPlantsTotal() > this.getWidth() * this.getHeight()) {
+            return false;
+        }
+        return Arrays.stream(this.requiredKeys).map(key -> this.values.get(key) >= 0).reduce(true,
+                (left, right) -> left && right);
+    }
+
     public Configuration(String filepath) throws InvalidConfiguration {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filepath));
@@ -33,6 +47,10 @@ public class Configuration {
                 throw new InvalidConfiguration(
                         "Configuration file at " + filepath + " doesn't have all required settings.");
             }
+            if (!isValid()) {
+                throw new InvalidConfiguration(
+                        "This configuration has invalid fields");
+            }
         } catch (IOException e) {
             throw new InvalidConfiguration("Can't read configuration file: " + filepath, e.getCause());
         }
@@ -46,11 +64,14 @@ public class Configuration {
             try {
                 Integer field_value = Integer.parseInt(fields[i]);
                 this.values.put(this.requiredKeys[i], field_value);
-
             } catch (NumberFormatException e) {
                 throw new InvalidConfiguration("Invalid key-value pair in configuration",
                         e.getCause());
             }
+        }
+        if (!isValid()) {
+            throw new InvalidConfiguration(
+                    "This  has invalid fields");
         }
     }
 
@@ -109,6 +130,10 @@ public class Configuration {
 
     public int getInitialAnimalsTotal() {
         return this.values.get("animals_initial_total");
+    }
+
+    public int getInitialPlantsTotal() {
+        return this.values.get("plants_initial_total");
     }
 
     public int getCreationEnergy() {

@@ -53,7 +53,7 @@ public class SimulationLauncher extends Application {
                 try {
                     new App("Simulation #" + windowCount.get(), getCurrentConfig()).start(new Stage());
                 } catch (InvalidConfiguration e) {
-                    this.infoLabel.setText("Invalid configuration");
+                    this.infoLabel.setText(e.getMessage());
                 }
             });
         });
