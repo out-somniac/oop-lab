@@ -16,13 +16,14 @@ import simulation.PortalMap;
 import simulation.SimulationEngine;
 import simulation.exceptions.InvalidConfiguration;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimulationLauncher extends Application {
 
     private double appWidthPx = 500;
     private double appHeightPx = 500;
-
+    private ArrayList<TextField> fields = new ArrayList<TextField>();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -32,17 +33,14 @@ public class SimulationLauncher extends Application {
         Button checkButton = new Button("Check configuration validity");
 
         AtomicInteger windowCount = new AtomicInteger();
-        // Set the action to perform when the button is clicked
         launchButton.setOnAction(event -> {
             // Increment the window count
             windowCount.getAndIncrement();
-            // Create and show the new window
-
-
+            String[] field_values = fields.stream().map(textField -> textField.getText()).toArray(String[]::new);
             Platform.runLater(() -> {
                 try {
                     new App("Simulation #" + windowCount.get(),
-                            new Configuration("src/main/resources/correct.conf")).start(new Stage());
+                            new Configuration(field_values)).start(new Stage());
                 } catch (InvalidConfiguration e) {
                     e.printStackTrace();
                 }
@@ -52,20 +50,20 @@ public class SimulationLauncher extends Application {
         VBox formVbox = new VBox(5);
         formVbox.setAlignment(Pos.CENTER);
         formVbox.getChildren().add(new Label("Current configuration"));
-
-        for (int i = 1; i <= 10; i++) {
-            // Create an HBox layout container to arrange the label and text field horizontally
+        String[] fieldNames = { "width", "height", "plants_initial_total", "plant_energy", "plant_growth",
+                "animals_initial_total", "starting_energy", "full_energy", "max_energy", "daily_energy_loss",
+                "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty" };
+        for (int i = 0; i < fieldNames.length; i++) {
+            // Create an HBox layout container to arrange the label and text field
+            // horizontally
             HBox hbox = new HBox();
             hbox.setAlignment(Pos.CENTER);
             hbox.setSpacing(10);
 
-            // Create a label for the text description and a text field for the input
-            Label label = new Label("Text Field " + i + ":");
-            label.setPrefWidth(70);
-            TextField textField = new TextField();
-
-            // Add the label and text field to the HBox
-            hbox.getChildren().addAll(label, textField);
+            Label label = new Label(fieldNames[i]);
+            label.setPrefWidth(200);
+            this.fields.add(new TextField());
+            hbox.getChildren().addAll(label, this.fields.get(i));
 
             // Add the HBox to the VBox
             formVbox.getChildren().add(hbox);

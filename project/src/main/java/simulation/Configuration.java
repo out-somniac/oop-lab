@@ -37,6 +37,22 @@ public class Configuration {
         }
     }
 
+    public Configuration(String[] fields) throws InvalidConfiguration {
+        if (fields.length != this.requiredKeys.length) {
+            throw new InvalidConfiguration("Incorrect number of fields in configuration fields in configuration");
+        }
+        for (int i = 0; i < fields.length; i++) {
+            try {
+                Integer field_value = Integer.parseInt(fields[i]);
+                this.values.put(this.requiredKeys[i], field_value);
+
+            } catch (NumberFormatException e) {
+                throw new InvalidConfiguration("Invalid key-value pair in configuration",
+                        e.getCause());
+            }
+        }
+    }
+
     private Pair<String, Integer> parseLine(String line, int lineNo) throws InvalidConfiguration {
         String[] pair = line.split("=");
         if (pair.length != 2) {
