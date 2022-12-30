@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import simulation.*;
 
@@ -29,19 +28,25 @@ public class App extends Application {
 
 
     private SimulationThread simulationThread;
-    private Button pauseButton;
-    private Button startButton;
+    private final Button pauseButton = new Button("Pause");
+    private final Button startButton = new Button("Start Simulation");
+
+    private final Label dayLabel = new Label("Current Day: ");
 
     String windowName;
 
     // delay between day simulation
-    private int stepTime = 100;
+    private int stepTime = 200;
 
     private Configuration config;
 
     private AnimalVisualisation animalVisualisation = new AnimalVisualisation();
 
     private ChartManager chartManager;
+
+    private SimulationEngine simulation;
+
+    private volatile boolean pausedByUser = false;
 
     App(String windowName, Configuration config) {
         super();
@@ -61,19 +66,20 @@ public class App extends Application {
 
     private Scene generateScene() {
         VBox stats = new VBox(5);
-        pauseButton = new Button("Pause");
+
         pauseButton.setPrefWidth(150);
         pauseButton.setOnAction(event -> {
             if (pauseButton.getText().equals("Pause")) {
                 pauseButton.setText("Unpause");
                 simulationThread.setPaused(true);
+                pausedByUser = true;
             } else {
                 pauseButton.setText("Pause");
                 simulationThread.setPaused(false);
+                pausedByUser = false;
             }
         });
 
-        startButton = new Button("Start Simulation");
         startButton.setPrefWidth(150);
         startButton.setOnAction(event -> {
             startButton.setDisable(true);
@@ -85,8 +91,7 @@ public class App extends Application {
         HBox buttonsBox = new HBox(10, startButton, pauseButton);
         buttonsBox.setAlignment(Pos.TOP_CENTER);
 
-        stats.getChildren().addAll(buttonsBox, animalVisualisation);
-        stats.setMinWidth(400);
+        stats.setMinWidth(200);
         stats.setMaxWidth(600);
         stats.setPadding(new Insets(10));
         stats.setAlignment(Pos.TOP_CENTER);
@@ -96,57 +101,40 @@ public class App extends Application {
         chartManager = new ChartManager(displayNDays);
         chartManager.getLineChart().setBorder(SIMPLE_BORDER);
         chartManager.getLineChart().setTitle("Animal and plant population graph");
-        stats.getChildren().add(chartManager.getLineChart());
 
 
-        SimulationEngine simulation;
-        simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
+        stats.getChildren().addAll(buttonsBox, chartManager.getLineChart(), animalVisualisation, dayLabel);
 
+        createSimulation();
 
-        simulationGrid = new MapVisualisation(config, 30, simulation, this);
-
-        HBox hBox = new HBox(stats, simulationGrid);
+        simulationGrid = new MapVisualisation(config, simulation, this);
+        simulationGrid.setPrefWidth(0);
+        VBox simBox = new VBox(simulationGrid);
+        simBox.setPadding(new Insets(10));
+        simBox.setAlignment(Pos.TOP_CENTER);
+        HBox hBox = new HBox(stats, simBox);
 
         simulationThread = new SimulationThread(simulation, this, stepTime);
-
-
-//        TableView<Animal> animalTable = createTable();
-//        animalTable.setItems(new ObservableListWrapper<>(simulation.getAnimals()));
-//        stats.getChildren().add(animalTable);
-
 
         return new Scene(hBox);
     }
 
-    private TableView<Animal> createTable() {
-        TableView<Animal> animalTable = new TableView<>();
-
-        animalTable.setStyle("-fx-font-weight: bold");
-        TableColumn<Animal, String> col1 = new TableColumn<>("Position");
-        col1.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getPosition().toString()));
-
-        TableColumn<Animal, String> col2 = new TableColumn<>("Direction");
-        col2.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDirection().toString()));
-
-        TableColumn<Animal, Integer> col3 = new TableColumn<>("Energy");
-        col3.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().energy));
-
-        TableColumn<Animal, Integer> col4 = new TableColumn<>("Day of birth");
-        col4.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().dayOfBirth));
-
-        TableColumn<Animal, Integer> col5 = new TableColumn<>("Children Count");
-        col5.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getNrOfChildren()));
-
-        return animalTable;
+    private void createSimulation() {
+        simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
     }
 
     // the app pauses the simulation engine until it finishes rendering the current frame
-    public void renderMap(Map<Vector2d, Tile> tileMap) {
+    public void renderFrame(Tile[][] tileMap) {
         simulationThread.setPaused(true);
         Platform.runLater(() -> {
             simulationGrid.draw(tileMap);
-            simulationThread.setPaused(false);
             animalVisualisation.update();
+            Statistics dayStats = simulation.generateDaySummary();
+            chartManager.updateGraph(dayStats.plantCount(), dayStats.nrOfAnimals());
+            dayLabel.setText("Current Day: " + dayStats.dayNr());
+            if (!pausedByUser) {
+                simulationThread.setPaused(false);
+            }
         });
     }
 

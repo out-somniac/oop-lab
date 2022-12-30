@@ -1,5 +1,7 @@
 package gui;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -10,9 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import simulation.*;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class MapVisualisation extends GridPane {
 
@@ -26,21 +27,37 @@ public class MapVisualisation extends GridPane {
 
     private Configuration config;
 
-    private Map<Vector2d, Tile> tileMap = new HashMap<>();
+    private Animal[][] animals;
 
-
-    MapVisualisation(Configuration config, double cellSize, SimulationEngine simulation, App app) {
+    private final Rectangle GRASS_REPRESENTATION;
+    MapVisualisation(Configuration config, SimulationEngine simulation, App app) {
         this.config = config;
         this.rowCount = config.getHeight();
-        this.colCount = config.getHeight();
-        this.cellSize = cellSize;
+        this.colCount = config.getWidth();
+        this.cellSize = calculateCellSize(this.rowCount, this.colCount);
         this.simulation = simulation;
         this.app = app;
         this.waterWidth = 20;
 
+        this.animals = new Animal[colCount][rowCount];
+        GRASS_REPRESENTATION = new Rectangle(cellSize, cellSize / 2);
+        GRASS_REPRESENTATION.setFill(Color.GREEN);
+
         createSimulationGrid();
         addMouseEvent();
 
+    }
+
+    private double calculateCellSize(int rowCount, int colCount) {
+        int maxVal = Math.max(rowCount, colCount);
+        return switch ((int) maxVal/10) {
+            case 0 -> 60;
+            case 1 -> 45;
+            case 2 -> 30;
+            case 3 -> 20;
+            case 4, 5 -> 15;
+            default -> 10;
+        };
     }
 
     void addMouseEvent() {
@@ -57,17 +74,9 @@ public class MapVisualisation extends GridPane {
             int col = (int) ((x - waterWidth) / cellSize);
 
 //            drawCircleWithText(col, row, String.valueOf(row * colCount + col), 1);
-            Vector2d position = new Vector2d(col, row);
-            Animal animal;
-            List<Animal> animalList = this.tileMap.containsKey(position) ? this.tileMap.get(position).animalList() : null;
-            if(animalList != null && animalList.size() > 0) {
-                animal = animalList.get(0);
-            } else {
-                animal = null;
-            }
+            Animal animal = this.animals[col][row];
 //                    System.out.println(animal);
 //                    System.out.println(animal.getGenotype());
-
             app.trackAnimal(animal);
 
 
@@ -78,26 +87,28 @@ public class MapVisualisation extends GridPane {
 
 
     private void createSimulationGrid() {
-//         create x-axis column
+        System.out.println(rowCount + " " + colCount);
         for(int i = 0; i < colCount; ++i) {
             getColumnConstraints().add(new ColumnConstraints(cellSize));
         }
         // create y-axis row
         for(int i = 0; i < rowCount; ++i) {
             getRowConstraints().add(new RowConstraints(cellSize));
+
         }
+
+
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
-                Rectangle rect = new Rectangle(cellSize, cellSize);
-                rect.setFill(Color.GREENYELLOW);
-                rect.setStrokeWidth(1);
-                rect.setStroke(Color.BLACK);
-                add(new StackPane(rect), j, i, 1, 1);
+                StackPane stackPane = new StackPane();
+                stackPane.setBackground(new Background(new BackgroundFill(Color.GREENYELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+                stackPane.setAlignment(Pos.CENTER);
+                add(stackPane, j, i, 1, 1);
             }
         }
         setBorder(new Border(new BorderStroke(Color.DARKRED,
                 BorderStrokeStyle.SOLID, null,
-                new BorderWidths(waterWidth, waterWidth, waterWidth, waterWidth))));
+                new BorderWidths(waterWidth))));
     }
 
     public void drawCircleWithText(int x, int y, String str, double colorRatio) {
@@ -106,36 +117,33 @@ public class MapVisualisation extends GridPane {
         int r = (int) cellSize/2;
         Circle circle = new Circle(r, r, r - 2);
         circle.setFill(noEnergyColor.interpolate(maxEnergyColor, colorRatio));
-        Text text = new Text(str);
-        text.setFill(Color.BLACK);
-        text.setStyle("-fx-font-size: 12pt");
-        stackPane.getChildren().addAll(circle, text);
-        stackPane.setAlignment(Pos.CENTER);
+        stackPane.getChildren().add(circle);
+        if(!str.equals("")) {
+            Text text = new Text(str);
+            text.setFill(Color.BLACK);
+            text.setStyle("-fx-font-size: 12pt");
+            stackPane.getChildren().add(text);
+        }
     }
 
-    public void draw(Map<Vector2d, Tile> tileMap) {
-        this.tileMap = tileMap;
+    public void draw(Tile[][] tileMap) {
 
-        for (int i = 0; i < rowCount; ++i) {
-            for (int j = 0; j < colCount; ++j) {
-                StackPane stackPane = (StackPane) getChildren().get(i * colCount + j);
-                Node node = stackPane.getChildren().get(0);
+        for (int y = 0; y < rowCount; ++y) {
+            for (int x = 0; x < colCount; ++x) {
+                StackPane stackPane = (StackPane) getChildren().get(y * colCount + x);
                 stackPane.getChildren().clear();
-                stackPane.getChildren().add(node);
-                Tile tile = tileMap.get(new Vector2d(j, i));
-                if (tile != null) {
-                    if (tile.hasPlant()) {
-                        Rectangle rect = new Rectangle(0, 100, cellSize - 2, cellSize / 2);
-                        rect.setFill(Color.GREEN);
-                        stackPane.getChildren().add(rect);
-                    }
-                    List<Animal> animalList = tile.animalList();
-                    if (animalList != null) {
-                        drawCircleWithText(j, i,
-                                animalList.size() > 1 ? String.valueOf(animalList.size()) : "",
-                                animalList.stream().mapToInt(animal -> animal.energy).average().orElse(0f)
-                                        / config.getMaxEnergy());
-                    }
+                if (tileMap[y][x].hasPlant()) {
+                    Rectangle rect = new Rectangle(cellSize - 2, cellSize / 2);
+                    rect.setFill(Color.GREEN);
+                    stackPane.getChildren().add(rect);
+                }
+                List<Animal> animalList = tileMap[y][x].animalList();
+                animals[x][y] = (animalList != null && animalList.size() > 0) ? animalList.get(0) : null;
+                if (animalList != null) {
+                    drawCircleWithText(x, y,
+                            animalList.size() > 1 ? String.valueOf(animalList.size()) : "",
+                            animalList.stream().mapToInt(animal -> animal.energy).average().orElse(0f)
+                                    / config.getMaxEnergy());
                 }
             }
         }
