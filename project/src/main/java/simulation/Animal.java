@@ -32,7 +32,10 @@ public class Animal {
 
     @Override
     public String toString() {
-        return this.position.toString() + " " + this.direction.toString();
+        return """
+                Animal at %s, orientation: %s
+                energy: %d 
+                """.formatted(position, direction, energy);
     }
 
     public Direction getDirection() {
@@ -63,8 +66,8 @@ public class Animal {
         return this.energy >= config.getFullEnergy();
     }
 
-    public void eatVegetation(Plant plant) {
-        this.energy = Math.min(config.getMaxEnergy(), this.energy + plant.getEnergy());
+    public void eatVegetation(int plantEnergy) {
+        this.energy = Math.min(config.getMaxEnergy(), this.energy + plantEnergy);
     }
 
     public void breed() {
