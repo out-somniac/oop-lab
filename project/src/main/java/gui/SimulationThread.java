@@ -50,8 +50,8 @@ public class SimulationThread extends Thread {
     }
     void doCycle() {
         simulationEngine.simulateDay();
-        Map<Vector2d, Tile> tiles = simulationEngine.getTiles();
-        application.renderMap(tiles);
+        Tile[][] tiles = simulationEngine.getTiles();
+        application.renderFrame(tiles);
         try {
             Thread.sleep(stepTime);
         } catch (InterruptedException e) {
