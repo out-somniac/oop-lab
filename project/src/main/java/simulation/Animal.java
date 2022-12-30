@@ -7,7 +7,7 @@ public class Animal {
     private Direction direction;
     private Vector2d position;
     public int energy;
-    final int dayOfBirth;
+    public final int dayOfBirth;
 
     int nrOfChildren;
     private final Configuration config;
@@ -77,5 +77,9 @@ public class Animal {
 
     public Genotype getGenotype() {
         return genotype;
+    }
+
+    public int getNrOfChildren() {
+        return nrOfChildren;
     }
 }
