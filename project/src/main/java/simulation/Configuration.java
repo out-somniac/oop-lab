@@ -1,6 +1,7 @@
 package simulation;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +38,22 @@ public class Configuration {
         }
     }
 
+    public Configuration(String[] fields) throws InvalidConfiguration {
+        if (fields.length != this.requiredKeys.length) {
+            throw new InvalidConfiguration("Incorrect number of fields in configuration fields in configuration");
+        }
+        for (int i = 0; i < fields.length; i++) {
+            try {
+                Integer field_value = Integer.parseInt(fields[i]);
+                this.values.put(this.requiredKeys[i], field_value);
+
+            } catch (NumberFormatException e) {
+                throw new InvalidConfiguration("Invalid key-value pair in configuration",
+                        e.getCause());
+            }
+        }
+    }
+
     private Pair<String, Integer> parseLine(String line, int lineNo) throws InvalidConfiguration {
         String[] pair = line.split("=");
         if (pair.length != 2) {
@@ -50,6 +67,18 @@ public class Configuration {
             throw new InvalidConfiguration("Invalid key-value pair in configuration file on line " + lineNo,
                     e.getCause());
         }
+    }
+
+    public void saveToFile(String filepath) throws IOException {
+        FileWriter writer = new FileWriter(filepath);
+        Arrays.stream(this.requiredKeys).forEach(key -> {
+            try {
+                writer.write(key + "=" + this.values.get(key) + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        writer.close();
     }
 
     private boolean hasAllKeys() {
@@ -112,5 +141,10 @@ public class Configuration {
 
     public int getMaxMutations() {
         return this.values.get("max_mutations");
+    }
+
+    public String[] getAllFields() {
+        return Arrays.stream(this.requiredKeys).map(key -> this.values.get(key)).map(value -> Integer.toString(value))
+                .toArray(String[]::new);
     }
 }

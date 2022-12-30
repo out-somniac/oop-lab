@@ -25,8 +25,6 @@ public class App extends Application {
 
     private MapVisualisation simulationGrid;
 
-
-
     private SimulationThread simulationThread;
     private final Button pauseButton = new Button("Pause");
     private final Button startButton = new Button("Start Simulation");
@@ -102,7 +100,6 @@ public class App extends Application {
         chartManager.getLineChart().setBorder(SIMPLE_BORDER);
         chartManager.getLineChart().setTitle("Animal and plant population graph");
 
-
         stats.getChildren().addAll(buttonsBox, chartManager.getLineChart(), animalVisualisation, dayLabel);
 
         createSimulation();
@@ -115,7 +112,6 @@ public class App extends Application {
         HBox hBox = new HBox(stats, simBox);
 
         simulationThread = new SimulationThread(simulation, this, stepTime);
-
         return new Scene(hBox);
     }
 
@@ -123,7 +119,6 @@ public class App extends Application {
         simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
     }
 
-    // the app pauses the simulation engine until it finishes rendering the current frame
     public void renderFrame(Tile[][] tileMap) {
         simulationThread.setPaused(true);
         Platform.runLater(() -> {
@@ -144,6 +139,5 @@ public class App extends Application {
         });
 
     }
-
 
 }

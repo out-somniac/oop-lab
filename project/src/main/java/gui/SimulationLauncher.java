@@ -9,20 +9,34 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import simulation.Configuration;
 import simulation.LushEquatorsVegetation;
 import simulation.PortalMap;
 import simulation.SimulationEngine;
 import simulation.exceptions.InvalidConfiguration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputFilter.Config;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimulationLauncher extends Application {
 
     private double appWidthPx = 500;
-    private double appHeightPx = 500;
+    private double appHeightPx = 800;
+    private ArrayList<TextField> fields = new ArrayList<TextField>();
+    private Label infoLabel = new Label("");
+    private BorderPane mainPane = new BorderPane();
 
+    private Configuration getCurrentConfig() throws InvalidConfiguration {
+        String[] field_values = fields.stream().map(textField -> textField.getText()).toArray(String[]::new);
+        return new Configuration(field_values);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -32,19 +46,14 @@ public class SimulationLauncher extends Application {
         Button checkButton = new Button("Check configuration validity");
 
         AtomicInteger windowCount = new AtomicInteger();
-        // Set the action to perform when the button is clicked
         launchButton.setOnAction(event -> {
             // Increment the window count
             windowCount.getAndIncrement();
-            // Create and show the new window
-
-
             Platform.runLater(() -> {
                 try {
-                    new App("Simulation #" + windowCount.get(),
-                            new Configuration("src/main/resources/correct.conf")).start(new Stage());
+                    new App("Simulation #" + windowCount.get(), getCurrentConfig()).start(new Stage());
                 } catch (InvalidConfiguration e) {
-                    e.printStackTrace();
+                    this.infoLabel.setText("Invalid configuration");
                 }
             });
         });
@@ -52,20 +61,20 @@ public class SimulationLauncher extends Application {
         VBox formVbox = new VBox(5);
         formVbox.setAlignment(Pos.CENTER);
         formVbox.getChildren().add(new Label("Current configuration"));
-
-        for (int i = 1; i <= 10; i++) {
-            // Create an HBox layout container to arrange the label and text field horizontally
+        String[] fieldNames = { "width", "height", "plants_initial_total", "plant_energy", "plant_growth",
+                "animals_initial_total", "starting_energy", "full_energy", "max_energy", "daily_energy_loss",
+                "creation_energy", "min_mutations", "max_mutations", "genome_length", "energy_penalty" };
+        for (int i = 0; i < fieldNames.length; i++) {
+            // Create an HBox layout container to arrange the label and text field
+            // horizontally
             HBox hbox = new HBox();
             hbox.setAlignment(Pos.CENTER);
             hbox.setSpacing(10);
 
-            // Create a label for the text description and a text field for the input
-            Label label = new Label("Text Field " + i + ":");
-            label.setPrefWidth(70);
-            TextField textField = new TextField();
-
-            // Add the label and text field to the HBox
-            hbox.getChildren().addAll(label, textField);
+            Label label = new Label(fieldNames[i]);
+            label.setPrefWidth(200);
+            this.fields.add(new TextField());
+            hbox.getChildren().addAll(label, this.fields.get(i));
 
             // Add the HBox to the VBox
             formVbox.getChildren().add(hbox);
@@ -77,16 +86,18 @@ public class SimulationLauncher extends Application {
         launchButton.setAlignment(Pos.CENTER);
         formVbox.getChildren().add(controls);
 
-        BorderPane mainPane = new BorderPane();
-        mainPane.setPadding(new Insets(0, 0, 20, 0));
-        mainPane.setTop(createNavBar());
-        mainPane.setCenter(formVbox);
-        mainPane.setBottom(controls);
+        formVbox.getChildren().add(infoLabel);
+
+        this.mainPane.setPadding(new Insets(0, 0, 20, 0));
+        this.mainPane.setTop(createNavBar());
+        this.mainPane.setCenter(formVbox);
+        this.mainPane.setBottom(controls);
 
         Scene scene = new Scene(mainPane, appWidthPx, appHeightPx);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Animals Simulation");
         primaryStage.show();
+
     }
 
     private MenuBar createNavBar() {
@@ -95,12 +106,51 @@ public class SimulationLauncher extends Application {
 
         // Create a submenu for the configuration menu
         MenuItem loadConfig = new MenuItem("Load Config");
+        loadConfig.setOnAction(event -> {
+            try {
+                File file = this.getUserFilePath();
+                Configuration config = new Configuration(file.getAbsolutePath());
+                String[] configFields = config.getAllFields();
+                for (int i = 0; i < configFields.length; i++) {
+                    this.fields.get(i).setText(configFields[i]);
+                }
+            } catch (FileNotFoundException ex) {
+                this.infoLabel.setText("Can not open configuration file!");
+            } catch (InvalidConfiguration ex) {
+                this.infoLabel.setText("Invalid configuration");
+            }
+        });
         MenuItem saveConfig = new MenuItem("Save Config");
+        saveConfig.setOnAction(event -> {
+            try {
+                File file = this.getUserFilePath();
+                Configuration config = this.getCurrentConfig();
+                config.saveToFile(file.getAbsolutePath());
+            } catch (IOException ex) {
+                this.infoLabel.setText("Can not open configuration file!");
+            } catch (InvalidConfiguration ex) {
+                this.infoLabel.setText("Invalid configuration");
+            }
+        });
         configMenu.getItems().addAll(loadConfig, saveConfig);
 
         // Create a menu bar and add the three menus
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(configMenu);
         return menuBar;
+    }
+
+    private File getUserFilePath() throws FileNotFoundException {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Configuration filepath");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("CONFIG", "*.conf"));
+
+        File file = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
+        if (file != null) {
+            return file;
+        }
+        throw new FileNotFoundException("Configuration file not found");
     }
 }
