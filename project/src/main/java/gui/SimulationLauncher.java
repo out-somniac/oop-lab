@@ -28,6 +28,8 @@ public class SimulationLauncher extends Application {
     private Label infoLabel = new Label("");
     private BorderPane mainPane = new BorderPane();
 
+    private File DEFAULT_CONFIG = new File("src/main/resources/correct.conf");
+
     private String toSpaced(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase().replaceAll("_", " ");
     }
@@ -76,6 +78,11 @@ public class SimulationLauncher extends Application {
         this.mainPane.setCenter(formVbox);
         this.mainPane.setBottom(controls);
 
+        try {
+            Configuration config = new Configuration(DEFAULT_CONFIG.getAbsolutePath());
+            setConfig(config);
+        } catch (Exception ignored) {ignored.printStackTrace();};
+
         Platform.setImplicitExit(true);
 
         Scene scene = new Scene(mainPane, appWidthPx, appHeightPx);
@@ -93,10 +100,7 @@ public class SimulationLauncher extends Application {
             try {
                 File file = this.getUserFilePath();
                 Configuration config = new Configuration(file.getAbsolutePath());
-                String[] configFields = config.getAllFields();
-                for (int i = 0; i < configFields.length; i++) {
-                    this.fields.get(i).setText(configFields[i]);
-                }
+                setConfig(config);
             } catch (FileNotFoundException ex) {
                 this.infoLabel.setText("Can not open configuration file!");
             } catch (InvalidConfiguration ex) {
@@ -106,7 +110,9 @@ public class SimulationLauncher extends Application {
         MenuItem saveConfig = new MenuItem("Save Config");
         saveConfig.setOnAction(event -> {
             try {
-                File file = this.getUserFilePath();
+                File file = this.getSavePath();
+                if (file == null)
+                    return;
                 Configuration config = this.getCurrentConfig();
                 config.saveToFile(file.getAbsolutePath());
             } catch (IOException ex) {
@@ -122,10 +128,28 @@ public class SimulationLauncher extends Application {
         return menuBar;
     }
 
+
+    private void setConfig(Configuration config) {
+        String[] configFields = config.getAllFields();
+        for (int i = 0; i < configFields.length; i++) {
+            this.fields.get(i).setText(configFields[i]);
+        }
+    }
+
+
+    private File getSavePath(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save configuration");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("CONFIG", "*.conf"));
+        return fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
+    }
+
+
     private File getUserFilePath() throws FileNotFoundException {
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Configuration filepath");
+        fileChooser.setTitle("Load configuration");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("CONFIG", "*.conf"));
 

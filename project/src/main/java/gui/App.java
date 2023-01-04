@@ -96,7 +96,7 @@ public class App extends Application {
 
         createSimulation();
 
-        simulationGrid = new MapVisualisation(config, simulation, this);
+        simulationGrid = new MapVisualisation(config, this);
         simulationGrid.setPrefWidth(0);
         VBox simBox = new VBox(simulationGrid);
         simBox.setPadding(new Insets(10));

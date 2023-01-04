@@ -23,6 +23,7 @@ public class SimulationEngine {
         this.animalFactory = new AnimalFactory(this.config, this.map);
         tiles = new Tile[config.getHeight()][config.getWidth()];
         createInitialAnimals(this.config.getInitialAnimalsTotal());
+        vegetationModel.growPlants(this.config.getInitialPlantsTotal());
     }
 
     void moveAnimals() {
