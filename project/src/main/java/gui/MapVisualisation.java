@@ -119,7 +119,7 @@ public class MapVisualisation extends GridPane {
         circle.setFill(noEnergyColor.interpolate(maxEnergyColor, colorRatio));
 
         stackPane.getChildren().add(circle);
-        if (!str.equals("")) {
+        if (!str.equals("") && cellSize > 15) {
             Text text = new Text(str);
             text.setFill(Color.BLACK);
             text.setStyle("-fx-font-size: 12pt");
