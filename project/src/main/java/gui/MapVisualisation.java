@@ -1,10 +1,8 @@
 package gui;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -12,7 +10,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import simulation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MapVisualisation extends GridPane {
@@ -22,27 +19,26 @@ public class MapVisualisation extends GridPane {
     private final double cellSize;
     private final double waterWidth;
 
-    private final SimulationEngine simulation;
     private final App app;
 
-    private Configuration config;
+    private final Configuration config;
 
-    private Animal[][] animals;
+    private final Animal[][] animals;
 
-    private final Rectangle GRASS_REPRESENTATION;
+    private final int r;
 
-    MapVisualisation(Configuration config, SimulationEngine simulation, App app) {
+
+    private Animal trackedAnimal = null;
+
+    MapVisualisation(Configuration config, App app) {
         this.config = config;
         this.rowCount = config.getHeight();
         this.colCount = config.getWidth();
         this.cellSize = calculateCellSize(this.rowCount, this.colCount);
-        this.simulation = simulation;
         this.app = app;
         this.waterWidth = 20;
-
+        this.r = (int) (cellSize / 2);
         this.animals = new Animal[colCount][rowCount];
-        GRASS_REPRESENTATION = new Rectangle(cellSize / 2, cellSize / 2);
-        GRASS_REPRESENTATION.setFill(Color.GREEN);
 
         createSimulationGrid();
         addMouseEvent();
@@ -74,9 +70,19 @@ public class MapVisualisation extends GridPane {
             int row = (int) ((y - waterWidth) / cellSize);
             int col = (int) ((x - waterWidth) / cellSize);
 
-            Animal animal = this.animals[col][row];
-            app.trackAnimal(animal);
 
+            if(this.animals[col][row] != null) {
+                if(trackedAnimal != null) {
+                    Vector2d position = trackedAnimal.getPosition();
+                    StackPane stackPane = (StackPane) getChildren().get(position.y * colCount + position.x);
+                    stackPane.getChildren().remove(stackPane.getChildren().size() - 1);
+                }
+                app.trackAnimal(this.animals[col][row]);
+
+                trackedAnimal = this.animals[col][row];
+                Vector2d position = trackedAnimal.getPosition();
+                highlightAnimal(position.x, position.y);
+            }
         });
     }
 
@@ -109,9 +115,9 @@ public class MapVisualisation extends GridPane {
     public void drawCircleWithText(int x, int y, String str, double colorRatio) {
         StackPane stackPane = (StackPane) getChildren().get(y * colCount + x);
 
-        int r = (int) cellSize / 2;
         Circle circle = new Circle(r, r, r - 2);
         circle.setFill(noEnergyColor.interpolate(maxEnergyColor, colorRatio));
+
         stackPane.getChildren().add(circle);
         if (!str.equals("")) {
             Text text = new Text(str);
@@ -141,5 +147,18 @@ public class MapVisualisation extends GridPane {
                 }
             }
         }
+        if(trackedAnimal != null) {
+            Vector2d position = trackedAnimal.getPosition();
+            highlightAnimal(position.x, position.y);
+        }
+    }
+
+    private void highlightAnimal(int x, int y) {
+        StackPane stackPane = (StackPane) getChildren().get(y * colCount + x);
+        Circle circle = new Circle(r, r, r - 2);
+        circle.setStroke(Color.BLACK);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStrokeWidth(4);
+        stackPane.getChildren().add(circle);
     }
 }
