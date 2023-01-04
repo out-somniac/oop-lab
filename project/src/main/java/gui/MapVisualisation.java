@@ -158,7 +158,7 @@ public class MapVisualisation extends GridPane {
         Circle circle = new Circle(r, r, r - 2);
         circle.setStroke(Color.BLACK);
         circle.setFill(Color.TRANSPARENT);
-        circle.setStrokeWidth(4);
+        circle.setStrokeWidth(cellSize/10);
         stackPane.getChildren().add(circle);
     }
 }

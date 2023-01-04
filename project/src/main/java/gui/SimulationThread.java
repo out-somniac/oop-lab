@@ -2,9 +2,6 @@ package gui;
 
 import simulation.SimulationEngine;
 import simulation.Tile;
-import simulation.Vector2d;
-
-import java.util.Map;
 
 public class SimulationThread extends Thread {
     private volatile boolean paused = false;
@@ -12,13 +9,13 @@ public class SimulationThread extends Thread {
     private final Object lock = new Object();
     private final SimulationEngine simulationEngine;
     private final App application;
+    private final int daysPerSecond;
 
-    private final int frameRate;
 
-    SimulationThread(SimulationEngine simulationEngine, App application, int frameRate) {
+    SimulationThread(SimulationEngine simulationEngine, App application, int daysPerSecond) {
         this.simulationEngine = simulationEngine;
         this.application = application;
-        this.frameRate = frameRate;
+        this.daysPerSecond = daysPerSecond;
     }
 
     public void setPaused(boolean shouldPause) {
@@ -36,12 +33,14 @@ public class SimulationThread extends Thread {
 
     @Override
     public void run() {
-        long now;
-        long updateTime;
-        long wait;
-        final long optimalTime = 1000000000 / frameRate;
+        long frameStartTime;
+        long frameFinishedTime;
+        // time per frame in milliseconds
+        final long timePerUpdate = 1000 / daysPerSecond;
         while (running) {
-            now = System.nanoTime();
+            frameStartTime = System.currentTimeMillis();
+
+            executeCycle();
 
             synchronized (lock) {
                 while (paused) {
@@ -51,14 +50,18 @@ public class SimulationThread extends Thread {
                     }
                 }
             }
-            executeCycle();
 
-            updateTime = System.nanoTime() - now;
-            wait = (optimalTime - updateTime) / 1000000;
-            try {
-                Thread.sleep((wait > 0) ? wait : 200);
-            } catch (Exception e) {
-                e.printStackTrace();
+            frameFinishedTime = System.currentTimeMillis();
+
+
+            long frameDuration = frameFinishedTime - frameStartTime;
+
+            if (timePerUpdate > frameDuration) {
+                try {
+                    Thread.sleep(timePerUpdate - frameDuration);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         }
