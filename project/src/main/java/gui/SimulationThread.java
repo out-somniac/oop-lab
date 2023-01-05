@@ -29,6 +29,7 @@ public class SimulationThread extends Thread {
 
     public void killThread() {
         this.running = false;
+        setPaused(false);
     }
 
     @Override
