@@ -11,6 +11,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import simulation.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 public class App extends Application {
 
     private double appWidthPx = 1400;
@@ -27,6 +32,8 @@ public class App extends Application {
     private final Button startButton = new Button("Start Simulation");
 
     private final Label dayLabel = new Label("Current Day: ");
+    private final Label avgLifespanLabel = new Label("Average Lifespan: ");
+    private final Label avgEnergy = new Label("Average energy: ");
 
     String windowName;
 
@@ -42,6 +49,7 @@ public class App extends Application {
         super();
         this.windowName = windowName;
         this.config = config;
+        fileName = "src/main/resources/SimulationStats-%s-%d".formatted(windowName, System.currentTimeMillis());
     }
 
     @Override
@@ -73,6 +81,7 @@ public class App extends Application {
         startButton.setPrefWidth(150);
         startButton.setOnAction(event -> {
             startButton.setDisable(true);
+            saveToFile(header);
             simulationThread.start();
         });
 
@@ -92,7 +101,7 @@ public class App extends Application {
         chartManager.getLineChart().setBorder(SIMPLE_BORDER);
         chartManager.getLineChart().setTitle("Animal and plant population graph");
 
-        stats.getChildren().addAll(buttonsBox, chartManager.getLineChart(), animalVisualisation, dayLabel);
+        stats.getChildren().addAll(buttonsBox, chartManager.getLineChart(), animalVisualisation, new HBox(10, dayLabel, avgLifespanLabel, avgEnergy));
 
         createSimulation();
 
@@ -107,6 +116,10 @@ public class App extends Application {
         return new Scene(hBox);
     }
 
+
+    private String header = "dayNr; nrOfAnimals; animalsBorn; averageEnergy; plantCount; lifespanOfDead";
+    private String fileName;
+
     private void createSimulation() {
         simulation = new SimulationEngine(config, new PortalMap(config), new LushEquatorsVegetation(config));
     }
@@ -119,6 +132,9 @@ public class App extends Application {
             Statistics dayStats = simulation.generateDaySummary();
             chartManager.updateGraph(dayStats.plantCount(), dayStats.nrOfAnimals());
             dayLabel.setText("Current Day: " + dayStats.dayNr());
+            avgLifespanLabel.setText("Average Lifespan: %.2f".formatted(dayStats.lifespanOfDead()));
+            avgEnergy.setText("Average energy: %.2f".formatted(dayStats.averageEnergy()));
+            saveToFile(dayStats.getCSVFormat());
             if (!pausedByUser) {
                 simulationThread.setPaused(false);
             }
@@ -130,6 +146,15 @@ public class App extends Application {
             animalVisualisation.visualizeAnimal(animal);
         });
 
+    }
+
+    private void saveToFile(String str) {
+        try( BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            writer.newLine();
+            writer.write(str);
+        } catch (IOException e) {
+            System.err.println("Failed to write to file!");
+        } ;
     }
 
 }

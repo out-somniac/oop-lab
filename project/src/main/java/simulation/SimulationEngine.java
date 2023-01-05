@@ -14,6 +14,10 @@ public class SimulationEngine {
     private final Configuration config;
     private int currentDay = 0;
 
+    private int deadAnimalLifespanTotal = 0;
+
+    private int deadAnimalCount = 0;
+
     private final Tile[][] tiles;
 
     public SimulationEngine(Configuration config, IMap map, IVegetationModel vegetationModel) {
@@ -74,6 +78,10 @@ public class SimulationEngine {
     }
 
     void removeDeadEntities() {
+        this.animals.stream().filter(animal -> !animal.isAlive()).forEach(animal -> {
+            deadAnimalLifespanTotal += currentDay - animal.dayOfBirth;
+            deadAnimalCount++;
+        });
         this.animals.removeIf(animal -> !animal.isAlive());
     }
 
@@ -112,7 +120,8 @@ public class SimulationEngine {
     public Statistics generateDaySummary() {
         double averageEnergy = animals.stream().mapToInt(animals -> animals.energy).average().orElse(0f);
         long bornAnimals = animals.stream().filter(animal -> animal.dayOfBirth == currentDay).count();
-        return new Statistics(currentDay, animals.size(), bornAnimals, averageEnergy, vegetationModel.plantCount());
+        return new Statistics(currentDay, animals.size(), bornAnimals, averageEnergy, vegetationModel.plantCount(),
+                (double) deadAnimalLifespanTotal / (deadAnimalCount == 0 ? 1 : deadAnimalCount));
     }
 
     public Tile[][] getTiles() {
