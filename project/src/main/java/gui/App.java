@@ -49,7 +49,7 @@ public class App extends Application {
         super();
         this.windowName = windowName;
         this.config = config;
-        fileName = "src/main/resources/SimulationStats-%s-%d".formatted(windowName, System.currentTimeMillis());
+        fileName = "src/main/resources/SimulationStats-%s-%d.csv".formatted(windowName, System.currentTimeMillis());
     }
 
     @Override
